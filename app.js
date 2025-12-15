@@ -358,3 +358,10 @@ function closeEditor() { window.churchPlayer?.closeEditor(); }
 window.addEventListener('DOMContentLoaded', () => {
     window.churchPlayer = new ChurchPlayer();
 });
+// 全局函数：供 HTML 内联 onclick 调用（兼容 type="module"）
+window.prevPage = () => window.churchPlayer?.prevPage();
+window.nextPage = () => window.churchPlayer?.nextPage();
+window.prevBackground = () => window.churchPlayer?.prevBackground();
+window.nextBackground = () => window.churchPlayer?.nextBackground();
+window.openEditor = () => window.churchPlayer?.openEditor();
+window.closeEditor = () => window.churchPlayer?.closeEditor();
