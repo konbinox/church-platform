@@ -1,0 +1,266 @@
+﻿{
+  "meta": {
+    "title": "生命河網路牧區小組聚會",
+    "date": "2025-10-04",
+    "version": "1.0"
+  },
+  "pages": {
+    "page01": {
+      "id": "page01",
+      "type": "welcome",
+      "title": "在耶穌裡我們是一家人",
+      "host": "Doreen姊妹",
+      "subtitle": "歡迎參加生命河網路牧區小組聚會"
+    },
+    "page02": {
+      "id": "page02",
+      "type": "notes",
+      "title": "注意事項",
+      "items": [
+        "請大家在名字前添加組號",
+        "若您還沒有報名,請上網報名",
+        "如有代禱事項或問題,請聯絡小組長",
+        "牧師分享信息、讀經、敬拜時,請靜音",
+        "請儘量打開視訊（video）"
+      ]
+    },
+    "page03": {
+      "id": "page03",
+      "type": "song",
+      "title": "歡迎詩歌",
+      "lyrics": "我們歡迎你，真歡迎你\n在主裡誠心歡迎!\n哈利路亞!\n我們歡迎你，真歡迎你\n在主裡誠心歡迎!"
+    },
+    "page04": {
+      "id": "page04",
+      "type": "worship-header",
+      "title": "敬拜讚美",
+      "leader": "Sheri姊妹帶領"
+    },
+    "page05": {
+      "id": "page05",
+      "type": "song",
+      "title": "活着就要荣耀主",
+      "lyrics": "活着就要荣耀主"
+    },
+    "page06": {
+      "id": "page06",
+      "type": "sermon-title",
+      "title": "跨越的人生"
+    },
+    "page07": {
+      "id": "page07",
+      "type": "sermon-quote",
+      "title": "劉彤牧師信息",
+      "quote": "盡性就是熱情",
+      "speaker": "劉彤牧師"
+    },
+    "page08": {
+      "id": "page08",
+      "type": "special-topic",
+      "title": "专题：聖餐與短講",
+      "leader": "王蕭殷牧師"
+    },
+    "page09": {
+      "id": "page09",
+      "type": "birthday",
+      "title": "慶祝十月份壽星",
+      "groups": [
+        "宇嶸, 陳英",
+        "慶林, 段冰, 王梅, 冉強, 潘婉玲, 王曉艷, 譚文婷",
+        "楊庭英, 程浩"
+      ]
+    },
+    "page10": {
+      "id": "page10",
+      "type": "birthday",
+      "title": "十月壽星（續）",
+      "groups": [
+        "張梓靖",
+        "劉芳, 陳惠婷, 張俊",
+        "趙琴, Joanne Chiang"
+      ]
+    },
+    "page11": {
+      "id": "page11",
+      "type": "testimony-guide",
+      "title": "大群見證故事／感恩時間",
+      "description": "(5-10分鐘，限一人一個見證，簡潔生動)",
+      "points": [
+        "聖靈的感動與引導",
+        "靈命的成長與突破",
+        "病得醫治/靈裡得釋放",
+        "得勝的生活"
+      ]
+    },
+    "page12": {
+      "id": "page12",
+      "type": "scripture",
+      "title": "今日經文",
+      "reference": "哥林多前書 10:31",
+      "text": "所以，你們或吃或喝，無論做甚麼，都要為榮耀神而行。"
+    },
+    "page13": {
+      "id": "page13",
+      "type": "study-outline",
+      "title": "查經要點",
+      "content": "1. 使用自由的兩個原則（林前 10:23-24）\n2. 兩個原則的應用\n   A. 市場的食物（25-26）\n   B. 筵席的食物（27-30）"
+    },
+    "page14": {
+      "id": "page14",
+      "type": "study-outline",
+      "content": "3. 凡事為榮耀神而行\n   A. 凡事要榮耀神（31）\n   B. 凡事要造就人（32）"
+    },
+    "page15": {
+      "id": "page15",
+      "type": "study-outline",
+      "content": "4. 要效法保羅的榜樣（10:33-11:1）"
+    },
+    "page16": {
+      "id": "page16",
+      "type": "study-questions",
+      "title": "查經問題",
+      "questions": [
+        "你曾為何人或何事放棄自由？結果如何？請簡述。",
+        "你曾否使用過這兩個原則？結果如何呢？請簡短分享。",
+        "為什麼我們能夠自由吃喝市場買來的或筵席裡的食物呢？在哪一種情形下我們要選擇不吃喝呢？",
+        "在生活或職場中，有哪些具體行動可以榮耀神？你想在哪方面來榮耀神呢？",
+        "請小組長帶領大家共同思考一個榮耀神的行動，得以帶領人歸向主。"
+      ]
+    },
+    "page17": {
+      "id": "page17",
+      "type": "course-title",
+      "title": "2025年第四季課程"
+    },
+    "page18": {
+      "id": "page18",
+      "type": "course-content",
+      "title": "課程內容（1–5）",
+      "items": [
+        "耶穌是誰？",
+        "救恩(耶穌為什麼而死?)",
+        "信主(如何得著信心?)",
+        "禱告(為什麼要禱告，怎樣禱告?)",
+        "讀經(為什麼要讀聖經,怎麼讀聖經?)"
+      ]
+    },
+    "page19": {
+      "id": "page19",
+      "type": "course-content",
+      "title": "課程內容（6–10）",
+      "items": [
+        "聖靈(什麼是聖靈,聖靈與你的關係為何?)",
+        "抵擋(如何抵擋邪惡?)",
+        "傳福音(為什麼要傳福音,怎樣傳福音？)",
+        "醫治(神今天還醫治人嗎?)",
+        "教會(教會是什麼?)"
+      ]
+    },
+    "page20": {
+      "id": "page20",
+      "type": "course-schedule",
+      "title": "啟程福音課程時間",
+      "schedule": [
+        "週日(美國,加拿大,墨西哥)",
+        "美西時間：4:30 PM - 6:30 PM",
+        "美中時間：6:30 PM - 8:30 PM",
+        "美東時間：7:30 PM - 9:30 PM",
+        "北京時間：週一 7:30 AM - 9:30 AM"
+      ],
+      "website": "ROLPLI.net"
+    },
+    "page21": {
+      "id": "page21",
+      "type": "zoom-info",
+      "title": "啟程 Zoom 連結",
+      "zoomUrl": "https://zoom.us/j/87175909068?pwd=YURndUtEOXYybHVHb2xqaGUwdkdSdz09",
+      "meetingId": "871 7590 9068",
+      "passcode": "7777"
+    },
+    "page22": {
+      "id": "page22",
+      "type": "prayer-list",
+      "title": "為啟程學員代禱（第1組）",
+      "names": [
+        "戎奇, 袁飛(Yuanfei)",
+        "許可微, 鄭偉林",
+        "魯文超, 李翔(Xiang Li)",
+        "徐金濤, 周穎, 王海潮"
+      ]
+    },
+    "page23": {
+      "id": "page23",
+      "type": "prayer-list",
+      "title": "為啟程學員代禱（第2組）",
+      "names": [
+        "張強(John Zhang), 王雯",
+        "Polly(練瑞櫻), 陳亮",
+        "陳立紅, 張國萌",
+        "Amy Liu, 宋曉瑋"
+      ]
+    },
+    "page24": {
+      "id": "page24",
+      "type": "prayer-list",
+      "title": "為啟程學員代禱（第3組）",
+      "names": [
+        "楊菲Faye, 石锦",
+        "闵雅婧, Sunny, Josie"
+      ]
+    },
+    "page25": {
+      "id": "page25",
+      "type": "prayer-list",
+      "title": "為啟程學員代禱（第4–5組）",
+      "names": [
+        "徐艷艷, 李娟, 程亮, 黃明浩",
+        "黃磊(Huang Lei), 侯魯雲",
+        "Jennifer Liu, 德蘭(Delan), Abigail Wang",
+        "李淑英(度), 王雷, Sabrina, 徐靜(Jing)"
+      ]
+    },
+    "page26": {
+      "id": "page26",
+      "type": "fire-training",
+      "title": "週末聖靈烈火敬拜/醫治禱告 訓練",
+      "saturday": [
+        "美西(早晨)：7:00 AM - 9:00 AM",
+        "美東(早晨)：10:00 AM - 12:00 PM",
+        "北京/台北(晚上)：10:00 PM - 00:00 AM"
+      ],
+      "sunday": [
+        "北京/台北(晚上)：8:00 PM - 10:00 PM",
+        "美西(早晨)：5:00 AM - 7:00 AM",
+        "美東(早晨)：8:00 AM - 10:00 AM"
+      ]
+    },
+    "page27": {
+      "id": "page27",
+      "type": "closing",
+      "title": "下周見",
+      "note": "請掃碼關注",
+      "qrCodeUrl": "https://example.com/qrcode.png"
+    },
+    "page28": {
+      "id": "page28",
+      "type": "reserved",
+      "title": "預留頁 A - 臨時公告",
+      "content": "",
+      "visible": false
+    },
+    "page29": {
+      "id": "page29",
+      "type": "reserved",
+      "title": "預留頁 B - 家事報告",
+      "content": "",
+      "visible": false
+    },
+    "page30": {
+      "id": "page30",
+      "type": "reserved",
+      "title": "預留頁 C - 主持人備註",
+      "content": "",
+      "visible": false
+    }
+  }
+}

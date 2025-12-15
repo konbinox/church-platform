@@ -1,0 +1,88 @@
+﻿/* styles/player.css - 教会聚会播放器样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+#app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 控制栏 */
+.controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+button {
+    padding: 14px 28px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    min-width: 140px;
+}
+
+button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* 页面内容 */
+#page-content {
+    background: white;
+    color: #2c3e50;
+    border-radius: 20px;
+    padding: 50px;
+    min-height: 600px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+    animation: fadeIn 0.5s ease;
+    text-align: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    #app {
+        padding: 10px;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    #page-content {
+        padding: 25px;
+        min-height: 400px;
+        margin: 0 10px;
+    }
+}

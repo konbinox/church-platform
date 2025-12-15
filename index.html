@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生命河聚会播放器</title>
+    <link rel="stylesheet" href="./styles/player.css">
+    <style>
+        body { margin: 0; background: #1a1a2e; color: white; font-family: 'Microsoft JhengHei', sans-serif; }
+        #app { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        button { padding: 12px 24px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #2980b9; }
+        #page-content { background: white; color: #333; border-radius: 15px; padding: 40px; min-height: 500px; }
+        .page-info { color: #95a5a6; text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="controls">
+            <button onclick="app.prevPage()">⬅️ 上一页</button>
+            <button onclick="app.nextPage()">➡️ 下一页</button>
+            <button onclick="app.loadCustomFile()">📁 载入聚会文件</button>
+            <button onclick="app.downloadData()">💾 下载当前数据</button>
+            <span style="margin-left: auto; color: #95a5a6;">空格键 / 方向键翻页</span>
+        </div>
+        
+        <div id="page-content">
+            <h1 style="text-align: center; color: #666;">正在加载聚会内容...</h1>
+        </div>
+        
+        <div class="page-info">
+            <span id="page-counter">- / -</span> | 
+            <span id="meeting-title">生命河聚会播放器</span> |
+            <span id="current-time">--:--</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createApp } from './app.js';
+        window.app = createApp();
+        window.app.init();
+    </script>
+</body>
+</html>
