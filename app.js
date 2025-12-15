@@ -17,6 +17,9 @@ class ChurchPlayer {
         this.updateTime();
         this.setupEventListeners();
         
+        // ✅ 确保全局可访问
+        window.churchPlayer = this;
+        
         console.log('教会聚会播放器已初始化');
     }
 
@@ -24,10 +27,11 @@ class ChurchPlayer {
         try {
             const response = await fetch('content/default-meeting.json');
             const data = await response.json();
-            this.pagesData = data.pages || [];
+            
+            // ✅ 核心修复：将 pages 对象转为数组
+            this.pagesData = Object.values(data.pages || {});
             this.totalPages = this.pagesData.length;
             
-            // 更新页面计数显示
             document.getElementById('total-pages').textContent = this.totalPages;
             document.getElementById('total-pages-display').textContent = this.totalPages;
             
@@ -91,8 +95,22 @@ class ChurchPlayer {
         this.setBackgroundImage(prevIndex);
     }
 
+    // ✅ 安全提取页面预览文本（适配不同字段）
+    getPagePreviewText(page) {
+        if (page.content) return page.content;
+        if (page.lyrics) return page.lyrics;
+        if (Array.isArray(page.items)) return page.items.join(' | ');
+        if (Array.isArray(page.groups)) return page.groups.join(' | ');
+        if (page.text) return page.text;
+        if (page.quote) return page.quote;
+        if (page.content) return page.content;
+        return '无内容';
+    }
+
     renderNavigation() {
         const pagesList = document.getElementById('pages-list');
+        if (!pagesList) return;
+
         pagesList.innerHTML = '';
         
         this.pagesData.forEach((page, index) => {
@@ -102,9 +120,10 @@ class ChurchPlayer {
                 pageItem.classList.add('active');
             }
             
-            const thumbnailContent = page.content ? 
-                page.content.substring(0, 80).replace(/\n/g, ' ') + '...' : 
-                '无内容';
+            const previewText = this.getPagePreviewText(page);
+            const thumbnailContent = previewText 
+                ? previewText.substring(0, 80).replace(/\n/g, ' ') + '...' 
+                : '无内容';
             
             pageItem.innerHTML = `
                 <div class="page-thumbnail">
@@ -129,14 +148,13 @@ class ChurchPlayer {
         this.currentPage = pageIndex;
         const page = this.pagesData[pageIndex];
         
-        // 更新页面内容
+        // 更新页面内容（支持多种字段）
+        const contentText = this.getPagePreviewText(page);
         document.getElementById('page-title').textContent = page.title || `页面 ${pageIndex + 1}`;
-        document.getElementById('page-text').innerHTML = (page.content || '').replace(/\n/g, '<br>');
+        document.getElementById('page-text').innerHTML = (contentText || '').replace(/\n/g, '<br>');
         document.getElementById('current-page').textContent = pageIndex + 1;
         
-        // 更新导航高亮
         this.updateNavigationHighlight();
-        
         console.log(`显示第 ${pageIndex + 1} 页`);
     }
 
@@ -154,16 +172,12 @@ class ChurchPlayer {
     nextPage() {
         if (this.currentPage < this.totalPages - 1) {
             this.showPage(this.currentPage + 1);
-        } else {
-            console.log('已经是最后一页');
         }
     }
 
     prevPage() {
         if (this.currentPage > 0) {
             this.showPage(this.currentPage - 1);
-        } else {
-            console.log('已经是第一页');
         }
     }
 
@@ -174,49 +188,44 @@ class ChurchPlayer {
             hour: '2-digit',
             minute: '2-digit'
         });
-        
         document.getElementById('current-time').textContent = timeString;
-        
         setTimeout(() => this.updateTime(), 1000);
     }
 
     openEditor() {
         const editorModal = document.getElementById('editor-modal');
-        editorModal.style.display = 'block';
-        
+        if (editorModal) editorModal.style.display = 'block';
         this.loadProfessionalEditor();
     }
 
     closeEditor() {
         const editorModal = document.getElementById('editor-modal');
-        editorModal.style.display = 'none';
+        if (editorModal) editorModal.style.display = 'none';
         
-        // 清空编辑器内容
         const editorComponent = document.getElementById('editor-component');
-        editorComponent.style.display = 'none';
-        editorComponent.innerHTML = '';
-        
-        // 显示加载指示器
-        document.getElementById('editor-loading').style.display = 'flex';
+        if (editorComponent) {
+            editorComponent.style.display = 'none';
+            editorComponent.innerHTML = '';
+        }
+
+        const loading = document.getElementById('editor-loading');
+        if (loading) loading.style.display = 'flex';
     }
 
     async loadProfessionalEditor() {
         try {
-            // 显示加载指示器
-            document.getElementById('editor-loading').style.display = 'flex';
-            document.getElementById('editor-component').style.display = 'none';
+            const loading = document.getElementById('editor-loading');
+            const editorComponent = document.getElementById('editor-component');
+            if (loading) loading.style.display = 'flex';
+            if (editorComponent) editorComponent.style.display = 'none';
             
-            // 动态加载编辑器模块
             const module = await import('./components/page-editor.js');
             window.pageEditorModule = module;
             
-            // 隐藏加载指示器
-            document.getElementById('editor-loading').style.display = 'none';
-            document.getElementById('editor-component').style.display = 'block';
+            if (loading) loading.style.display = 'none';
+            if (editorComponent) editorComponent.style.display = 'block';
             
-            // 渲染编辑器
             this.renderEditor();
-            
         } catch (error) {
             console.error('加载专业编辑器失败:', error);
             this.showEditorError();
@@ -225,8 +234,9 @@ class ChurchPlayer {
 
     renderEditor() {
         const editorComponent = document.getElementById('editor-component');
-        
-        // 创建编辑器容器结构
+        if (!editorComponent) return;
+
+        const currentPageData = this.getCurrentPageData();
         editorComponent.innerHTML = `
             <div class="editor-wrapper">
                 <div class="editor-header">
@@ -238,12 +248,9 @@ class ChurchPlayer {
                         </button>
                     </div>
                 </div>
-                
                 <div class="editor-main">
-                    <!-- 编辑器容器 -->
                     <div id="editor-container"></div>
                 </div>
-                
                 <div class="editor-footer">
                     <button class="btn-save-exit" onclick="window.churchPlayer.saveAndExitEditor()">
                         <i class="fas fa-save"></i> 保存并退出
@@ -257,15 +264,11 @@ class ChurchPlayer {
                 </div>
             </div>
         `;
-        
-        // 调用专业编辑器
-        if (window.pageEditorModule && window.pageEditorModule.renderPageEditor) {
-            const currentPageData = this.getCurrentPageData();
-            
+
+        if (window.pageEditorModule?.renderPageEditor) {
             window.pageEditorModule.renderPageEditor(
                 currentPageData,
                 (updatedPage) => {
-                    // 当页面被编辑时的回调函数
                     this.updatePageData(updatedPage);
                     this.renderNavigation();
                     this.showPage(this.currentPage);
@@ -275,355 +278,83 @@ class ChurchPlayer {
     }
 
     getCurrentPageData() {
-        const pageIndex = this.currentPage;
-        const page = this.pagesData[pageIndex] || {};
-        
+        const page = this.pagesData[this.currentPage] || {};
         return {
-            id: page.id || `page-${pageIndex + 1}`,
-            title: page.title || `页面 ${pageIndex + 1}`,
-            content: page.content || '',
-            type: page.type || 'text',
-            style: page.style || {},
-            slug: page.slug || `page-${pageIndex + 1}`,
-            sections: page.sections || [],
-            description: page.description || '',
-            ...page
+            ...page,
+            id: page.id || `page-${this.currentPage + 1}`,
+            title: page.title || `页面 ${this.currentPage + 1}`,
         };
     }
 
     updatePageData(updatedPage) {
-        const pageIndex = this.currentPage;
-        this.pagesData[pageIndex] = updatedPage;
-        
-        // 保存到本地存储
+        this.pagesData[this.currentPage] = updatedPage;
         this.saveToLocalStorage();
-        
-        console.log(`页面 ${pageIndex + 1} 已更新`);
     }
 
     saveToLocalStorage() {
         try {
-            const meetingData = {
+            localStorage.setItem('church-meeting-data', JSON.stringify({
                 pages: this.pagesData,
                 lastModified: new Date().toISOString(),
                 version: '1.0'
-            };
-            localStorage.setItem('church-meeting-data', JSON.stringify(meetingData));
-        } catch (error) {
-            console.error('保存到本地存储失败:', error);
+            }));
+        } catch (e) {
+            console.warn('本地保存失败:', e);
         }
-    }
-
-    switchToPageManager() {
-        // 创建页面管理器界面
-        const editorComponent = document.getElementById('editor-component');
-        
-        editorComponent.innerHTML = `
-            <div class="editor-wrapper">
-                <div class="editor-header">
-                    <h2><i class="fas fa-copy"></i> 页面管理器</h2>
-                    <div class="editor-subtitle">
-                        管理所有页面，点击页面进行编辑
-                        <button class="btn-back-editor" onclick="window.churchPlayer.loadProfessionalEditor()">
-                            <i class="fas fa-arrow-left"></i> 返回编辑器
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="editor-main">
-                    <div class="pages-manager">
-                        <div class="pages-list-header">
-                            <button class="btn-add-page" onclick="window.churchPlayer.addNewPage()">
-                                <i class="fas fa-plus"></i> 添加新页面
-                            </button>
-                            <div class="pages-stats">
-                                共 ${this.totalPages} 个页面
-                            </div>
-                        </div>
-                        
-                        <div class="pages-list" id="pages-manager-list">
-                            <!-- 页面列表将在这里动态生成 -->
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="editor-footer">
-                    <button class="btn-save-exit" onclick="window.churchPlayer.saveAndExitEditor()">
-                        <i class="fas fa-save"></i> 保存并退出
-                    </button>
-                    <button class="btn-cancel" onclick="closeEditor()">
-                        <i class="fas fa-times"></i> 取消
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        this.renderPagesManagerList();
-    }
-
-    renderPagesManagerList() {
-        const pagesList = document.getElementById('pages-manager-list');
-        if (!pagesList) return;
-        
-        pagesList.innerHTML = this.pagesData.map((page, index) => `
-            <div class="page-manager-item ${index === this.currentPage ? 'active' : ''}" data-index="${index}">
-                <div class="page-item-header">
-                    <div class="page-number">${index + 1}</div>
-                    <div class="page-title">${page.title || `页面 ${index + 1}`}</div>
-                    <div class="page-actions">
-                        <button class="btn-action btn-edit" data-index="${index}" title="编辑此页面">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-action btn-delete" data-index="${index}" ${this.totalPages <= 1 ? 'disabled' : ''} title="删除此页面">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="btn-action btn-move-up" data-index="${index}" ${index === 0 ? 'disabled' : ''} title="上移">
-                            <i class="fas fa-arrow-up"></i>
-                        </button>
-                        <button class="btn-action btn-move-down" data-index="${index}" ${index === this.totalPages - 1 ? 'disabled' : ''} title="下移">
-                            <i class="fas fa-arrow-down"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="page-item-preview">
-                    ${page.content ? page.content.substring(0, 100).replace(/\n/g, ' ') + '...' : '<span class="empty-content">无内容</span>'}
-                </div>
-            </div>
-        `).join('');
-        
-        // 绑定事件
-        this.bindPagesManagerEvents();
-    }
-
-    bindPagesManagerEvents() {
-        // 编辑页面
-        document.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(e.target.closest('[data-index]').dataset.index);
-                this.currentPage = index;
-                this.loadProfessionalEditor();
-            });
-        });
-        
-        // 删除页面
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(e.target.closest('[data-index]').dataset.index);
-                if (this.totalPages <= 1) {
-                    alert('至少需要保留一个页面！');
-                    return;
-                }
-                
-                if (confirm(`确定要删除第 ${index + 1} 页吗？`)) {
-                    this.pagesData.splice(index, 1);
-                    this.totalPages = this.pagesData.length;
-                    
-                    // 调整当前页面索引
-                    if (this.currentPage >= index) {
-                        this.currentPage = Math.max(0, this.currentPage - 1);
-                    }
-                    
-                    this.renderPagesManagerList();
-                    this.renderNavigation();
-                    this.showPage(this.currentPage);
-                }
-            });
-        });
-        
-        // 上移页面
-        document.querySelectorAll('.btn-move-up').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(e.target.closest('[data-index]').dataset.index);
-                if (index > 0) {
-                    this.movePage(index, index - 1);
-                }
-            });
-        });
-        
-        // 下移页面
-        document.querySelectorAll('.btn-move-down').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(e.target.closest('[data-index]').dataset.index);
-                if (index < this.totalPages - 1) {
-                    this.movePage(index, index + 1);
-                }
-            });
-        });
-        
-        // 点击页面项
-        document.querySelectorAll('.page-manager-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                if (!e.target.closest('.btn-action')) {
-                    const index = parseInt(item.dataset.index);
-                    this.currentPage = index;
-                    this.loadProfessionalEditor();
-                }
-            });
-        });
-    }
-
-    movePage(fromIndex, toIndex) {
-        const page = this.pagesData[fromIndex];
-        this.pagesData.splice(fromIndex, 1);
-        this.pagesData.splice(toIndex, 0, page);
-        
-        // 更新当前页面索引
-        if (this.currentPage === fromIndex) {
-            this.currentPage = toIndex;
-        } else if (this.currentPage === toIndex) {
-            this.currentPage = fromIndex;
-        }
-        
-        this.renderPagesManagerList();
-        this.renderNavigation();
-    }
-
-    addNewPage() {
-        const newPage = {
-            id: `page-${this.totalPages + 1}`,
-            title: `新页面 ${this.totalPages + 1}`,
-            content: '请编辑此页面内容...',
-            type: 'text',
-            style: {},
-            sections: []
-        };
-        
-        this.pagesData.push(newPage);
-        this.totalPages = this.pagesData.length;
-        this.currentPage = this.totalPages - 1;
-        
-        this.renderPagesManagerList();
-        this.renderNavigation();
-        this.loadProfessionalEditor();
-    }
-
-    saveAndExitEditor() {
-        // 保存数据
-        this.saveToLocalStorage();
-        
-        // 关闭编辑器
-        this.closeEditor();
-        
-        // 显示保存成功提示
-        this.showToast('页面数据已保存', 'success');
     }
 
     showToast(message, type = 'info') {
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
-        toast.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
-            <span>${message}</span>
-        `;
-        
+        toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i> <span>${message}</span>`;
         document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            setTimeout(() => {
-                if (toast.parentNode) toast.parentNode.removeChild(toast);
-            }, 300);
-        }, 2000);
+        setTimeout(() => toast.style.opacity = '0', 2000);
+        setTimeout(() => toast.remove(), 2300);
     }
 
     showEditorError() {
-        document.getElementById('editor-loading').style.display = 'none';
-        
         const editorComponent = document.getElementById('editor-component');
+        if (!editorComponent) return;
         editorComponent.style.display = 'block';
         editorComponent.innerHTML = `
             <div class="editor-error">
-                <div class="error-icon">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
+                <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
                 <h3>编辑器加载失败</h3>
-                <p>无法加载专业页面编辑器。请检查：</p>
-                <ul>
-                    <li><strong>components/page-editor.js</strong> 文件是否存在</li>
-                    <li>文件路径是否正确</li>
-                    <li>浏览器控制台是否有错误信息</li>
-                </ul>
-                <div class="error-actions">
-                    <button onclick="window.churchPlayer.loadProfessionalEditor()" class="btn-retry">
-                        <i class="fas fa-redo"></i> 重新加载
-                    </button>
-                    <button onclick="closeEditor()" class="btn-close">
-                        关闭编辑器
-                    </button>
-                </div>
+                <p>请检查 <code>components/page-editor.js</code> 是否已上传到仓库。</p>
+                <button onclick="window.churchPlayer.loadProfessionalEditor()" class="btn-retry">重新加载</button>
             </div>
         `;
     }
 
     setupEventListeners() {
-        // 键盘快捷键
         document.addEventListener('keydown', (e) => {
-            switch(e.key) {
-                case 'ArrowRight':
-                case ' ':
-                    this.nextPage();
-                    e.preventDefault();
-                    break;
-                case 'ArrowLeft':
-                    this.prevPage();
-                    e.preventDefault();
-                    break;
-                case 'Escape':
-                    this.closeEditor();
-                    break;
-                case 'b':
-                case 'B':
-                    this.nextBackground();
-                    break;
-                case 'v':
-                case 'V':
-                    this.prevBackground();
-                    break;
-                case 'e':
-                case 'E':
-                    if (!e.ctrlKey) {
-                        this.openEditor();
-                    }
-                    break;
+            switch (e.key) {
+                case 'ArrowRight': case ' ': this.nextPage(); e.preventDefault(); break;
+                case 'ArrowLeft': this.prevPage(); e.preventDefault(); break;
+                case 'Escape': this.closeEditor(); break;
+                case 'b': case 'B': this.nextBackground(); break;
+                case 'v': case 'V': this.prevBackground(); break;
+                case 'e': case 'E': if (!e.ctrlKey) this.openEditor(); break;
             }
         });
-        
-        // 点击编辑器模态框背景关闭
+
         const editorModal = document.getElementById('editor-modal');
-        editorModal.addEventListener('click', (e) => {
-            if (e.target === editorModal) {
-                this.closeEditor();
-            }
-        });
+        if (editorModal) {
+            editorModal.addEventListener('click', (e) => {
+                if (e.target === editorModal) this.closeEditor();
+            });
+        }
     }
 }
 
-// 全局函数供HTML按钮调用
-function prevPage() {
-    if (window.churchPlayer) window.churchPlayer.prevPage();
-}
+// 全局函数（供 HTML onclick 调用）
+function prevPage() { window.churchPlayer?.prevPage(); }
+function nextPage() { window.churchPlayer?.nextPage(); }
+function prevBackground() { window.churchPlayer?.prevBackground(); }
+function nextBackground() { window.churchPlayer?.nextBackground(); }
+function openEditor() { window.churchPlayer?.openEditor(); }
+function closeEditor() { window.churchPlayer?.closeEditor(); }
 
-function nextPage() {
-    if (window.churchPlayer) window.churchPlayer.nextPage();
-}
-
-function prevBackground() {
-    if (window.churchPlayer) window.churchPlayer.prevBackground();
-}
-
-function nextBackground() {
-    if (window.churchPlayer) window.churchPlayer.nextBackground();
-}
-
-function openEditor() {
-    if (window.churchPlayer) window.churchPlayer.openEditor();
-}
-
-function closeEditor() {
-    if (window.churchPlayer) window.churchPlayer.closeEditor();
-}
-
-// 页面加载完成后初始化
 window.addEventListener('DOMContentLoaded', () => {
     window.churchPlayer = new ChurchPlayer();
 });
