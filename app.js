@@ -109,7 +109,7 @@ class ChurchPlayer {
     });
   }
 
-  showPage(pageIndex) {
+ showPage(pageIndex) {
   const page = this.pagesData[pageIndex];
   document.getElementById('page-title').textContent = page.title || `页面 ${pageIndex + 1}`;
 
@@ -134,6 +134,11 @@ class ChurchPlayer {
   else {
     html = this.getPagePreviewText(page).replace(/\n/g, '<br>');
   }
+
+  document.getElementById('page-text').innerHTML = html;
+  document.getElementById('current-page').textContent = pageIndex + 1;
+  this.updateNavigationHighlight();
+}
 
   document.getElementById('page-text').innerHTML = html;
   document.getElementById('current-page').textContent = pageIndex + 1;
