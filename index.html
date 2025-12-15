@@ -1,45 +1,114 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生命河聚会播放器</title>
-    <link rel="stylesheet" href="./styles/player.css">
-    <style>
-        body { margin: 0; background: #1a1a2e; color: white; font-family: 'Microsoft JhengHei', sans-serif; }
-        #app { max-width: 1000px; margin: 0 auto; padding: 20px; }
-        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        button { padding: 12px 24px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
-        button:hover { background: #2980b9; }
-        #page-content { background: white; color: #333; border-radius: 15px; padding: 40px; min-height: 500px; }
-        .page-info { color: #95a5a6; text-align: center; margin-top: 20px; }
-    </style>
+    <title>教会聚会播放器</title>
+    <!-- 必须添加 Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/player.css">
 </head>
 <body>
-    <div id="app">
-        <div class="controls">
-            <button onclick="app.prevPage()">⬅️ 上一页</button>
-            <button onclick="app.nextPage()">➡️ 下一页</button>
-            <button onclick="app.loadCustomFile()">📁 载入聚会文件</button>
-            <button onclick="app.downloadData()">💾 下载当前数据</button>
-            <span style="margin-left: auto; color: #95a5a6;">空格键 / 方向键翻页</span>
+    <!-- 左侧导航栏 - 180px宽 -->
+    <div class="sidebar-nav">
+        <div class="nav-header">
+            <h3><i class="fas fa-list"></i> 页面导航</h3>
+            <div class="page-count">共 <span id="total-pages">30</span> 页</div>
         </div>
-        
-        <div id="page-content">
-            <h1 style="text-align: center; color: #666;">正在加载聚会内容...</h1>
-        </div>
-        
-        <div class="page-info">
-            <span id="page-counter">- / -</span> | 
-            <span id="meeting-title">生命河聚会播放器</span> |
-            <span id="current-time">--:--</span>
+        <div class="pages-list" id="pages-list">
+            <!-- 30个页面缩略图 -->
+            <div class="page-item active" onclick="showPage(0)">
+                <div class="page-thumbnail">
+                    <div class="thumbnail-content">第1页内容预览...</div>
+                </div>
+                <div class="page-title-small">页面 1</div>
+            </div>
+            <div class="page-item" onclick="showPage(1)">
+                <div class="page-thumbnail">
+                    <div class="thumbnail-content">第2页内容预览...</div>
+                </div>
+                <div class="page-title-small">页面 2</div>
+            </div>
+            <!-- 更多页面... 实际由JavaScript生成 -->
         </div>
     </div>
 
-    <script type="module">
-        import { createApp } from './app.js';
-        window.app = createApp();
-        window.app.init();
-    </script>
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <!-- 背景层 - 23张背景图 -->
+        <div class="background-layer" id="background-layer"></div>
+        
+        <!-- 内容层 -->
+        <div class="content-container">
+            <!-- 时间显示 -->
+            <div class="time-display" id="current-time">--:--</div>
+            
+            <!-- 页面内容 -->
+            <div class="page-content">
+                <h1 class="page-title" id="page-title">页面标题</h1>
+                <div class="page-text" id="page-text">
+                    页面内容将在这里显示...
+                </div>
+                <div class="page-number">
+                    第 <span id="current-page">1</span> 页 / 共 <span id="total-pages-display">30</span> 页
+                </div>
+            </div>
+            
+            <!-- 控制按钮 -->
+            <div class="control-buttons">
+                <button class="control-btn prev-btn" onclick="prevPage()">
+                    <i class="fas fa-chevron-left"></i> 上一页
+                </button>
+                
+                <!-- 背景控制 -->
+                <div class="bg-control-group">
+                    <button class="bg-control-btn" onclick="prevBackground()" title="上一张背景">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="bg-info">
+                        背景: <span id="bg-current">1</span>/<span id="bg-total">23</span>
+                    </div>
+                    <button class="bg-control-btn" onclick="nextBackground()" title="下一张背景">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <button class="control-btn next-btn" onclick="nextPage()">
+                    下一页 <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 右下角编辑按钮 -->
+        <button class="edit-btn" id="edit-btn" onclick="openEditor()">
+            <i class="fas fa-edit"></i> 编辑页面
+        </button>
+    </div>
+
+    <!-- 编辑器模态框 -->
+    <div class="editor-modal" id="editor-modal">
+        <div class="editor-container">
+            <div class="editor-header">
+                <h2><i class="fas fa-edit"></i> 页面编辑器</h2>
+                <button class="close-btn" onclick="closeEditor()">×</button>
+            </div>
+            <div class="editor-content" id="editor-content">
+                <div style="padding: 40px; text-align: center;">
+                    <h3>专业页面编辑器</h3>
+                    <p>编辑器正在加载...</p>
+                    <div style="margin: 20px;">
+                        <button onclick="loadAdvancedEditor()" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            加载专业编辑器
+                        </button>
+                    </div>
+                    <p style="color: #666; margin-top: 20px;">
+                        如果无法加载，请检查 <code>components/page-editor.js</code> 文件是否存在
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>
