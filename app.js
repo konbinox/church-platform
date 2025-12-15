@@ -110,15 +110,35 @@ class ChurchPlayer {
   }
 
   showPage(pageIndex) {
-    if (pageIndex < 0 || pageIndex >= this.totalPages) return;
-    this.currentPage = pageIndex;
-    const page = this.pagesData[pageIndex];
-    document.getElementById('page-title').textContent = page.title || `页面 ${pageIndex + 1}`;
-    document.getElementById('page-text').innerHTML = 
-      (this.getPagePreviewText(page) || '').replace(/\n/g, '<br>');
-    document.getElementById('current-page').textContent = pageIndex + 1;
-    this.updateNavigationHighlight();
+  const page = this.pagesData[pageIndex];
+  document.getElementById('page-title').textContent = page.title || `页面 ${pageIndex + 1}`;
+
+  let html = '';
+  
+  // ✅ 如果有 sections，按区块渲染
+  if (Array.isArray(page.sections)) {
+    html = page.sections.map(sec => {
+      let contentHtml = sec.content || '';
+      
+      // 如果是文本区块，应用样式
+      if (sec.type === 'text') {
+        const styleStr = Object.entries(sec.style || {}).map(([k, v]) => `${k}:${v}`).join(';');
+        return `<div style="${styleStr}">${contentHtml.replace(/\n/g, '<br>')}</div>`;
+      }
+      
+      // 其他类型（图片、音频等）可后续扩展
+      return `<div>${contentHtml}</div>`;
+    }).join('');
+  } 
+  // ✅ 否则，回退到旧方式
+  else {
+    html = this.getPagePreviewText(page).replace(/\n/g, '<br>');
   }
+
+  document.getElementById('page-text').innerHTML = html;
+  document.getElementById('current-page').textContent = pageIndex + 1;
+  this.updateNavigationHighlight();
+}
 
   updateNavigationHighlight() {
     document.querySelectorAll('.page-item').forEach((item, i) => {
