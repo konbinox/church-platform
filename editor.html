@@ -249,17 +249,17 @@ function renderPageList() {
       });
     }
 
-    // 渲染预览导航
-    function renderPreviewNavigation() {
-      const list = document.getElementById('preview-pages-list');
-      list.innerHTML = pages.map((page, i) => `
-        <div class="page-item" data-index="${i}">
-          <div class="page-title-small" title="${page.title || '未命名'}">
-            ${page.title || `页面 ${i+1}`}
-          </div>
-        </div>
-      `.join('');
-    }
+   // 渲染预览导航
+function renderPreviewNavigation() {
+  const list = document.getElementById('preview-pages-list');
+  list.innerHTML = pages.map((page, i) => `
+    <div class="page-item" data-index="${i}">
+      <div class="page-title-small" title="${page.title || '未命名'}">
+        ${page.title || `页面 ${i + 1}`}
+      </div>
+    </div>
+  `).join(''); // ✅ 注意：).join('') —— ) 在 .join 之前！
+}
 
     // 显示预览页
     function showPreviewPage(index) {
