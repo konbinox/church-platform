@@ -1,78 +1,23 @@
+<!-- index.html (纯播放模式) -->
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>教会聚会播放器</title>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="styles/player.css" />
+  <title>聚会播放</title>
+  <style>
+    body { margin: 0; padding: 0; overflow: hidden; }
+    #bg { position: fixed; top:0; left:0; width:100%; height:100%; background-size: cover; z-index: -1; }
+    #content { position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); text-align: center; color: white; text-shadow: 0 2px 6px rgba(0,0,0,0.6); }
+    #title { font-size: 48px; margin-bottom: 20px; }
+    #text { font-size: 28px; line-height: 1.6; max-width: 900px; }
+  </style>
 </head>
 <body>
-  <!-- 左侧导航栏 - 180px宽 -->
-  <div class="sidebar-nav">
-    <div class="nav-header">
-      <h3><i class="fas fa-list"></i> 页面导航</h3>
-      <div class="page-count">共 <span id="total-pages">30</span> 页</div>
-    </div>
-    <div class="pages-list" id="pages-list">
-      <!-- 由 JS 动态生成 -->
-    </div>
+  <div id="bg"></div>
+  <div id="content">
+    <h1 id="title"></h1>
+    <div id="text"></div>
   </div>
-
-  <!-- 主内容区域 -->
-  <div class="main-content">
-    <!-- 背景层 -->
-    <div class="background-layer" id="background-layer"></div>
-    
-    <!-- 内容层 -->
-    <div class="content-container">
-      <div class="time-display" id="current-time">--:--</div>
-      
-      <div class="page-content">
-        <h1 class="page-title" id="page-title">页面标题</h1>
-        <div class="page-text" id="page-text">页面内容将在这里显示...</div>
-        <div class="page-number">
-          第 <span id="current-page">1</span> 页 / 共 <span id="total-pages-display">30</span> 页
-        </div>
-      </div>
-      
-      
-        
-        <button class="control-btn next-btn" onclick="nextPage()">
-          下一页 <i class="fas fa-chevron-right"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- 编辑按钮（默认可见） -->
-    <button class="edit-btn" id="edit-btn" onclick="openEditor()">
-      <i class="fas fa-edit"></i> 编辑页面
-    </button>
-  </div>
-
-  <!-- 编辑器模态框 -->
-  <div class="editor-modal" id="editor-modal">
-    <div class="editor-container">
-      <div class="editor-header">
-        <h2><i class="fas fa-edit"></i> 页面编辑器</h2>
-        <button class="close-btn" onclick="closeEditor()">×</button>
-      </div>
-      <div class="editor-content" id="editor-content">
-        <div id="editor-component" style="display:none;"></div>
-        <div id="editor-loading" style="display:flex; justify-content:center; align-items:center; height:100%;">
-          <div style="text-align:center;">
-            <h3>正在加载专业编辑器...</h3>
-            <div style="margin:20px;">
-              <div style="width:40px; height:40px; border:4px solid #f3f3f3; border-top:#3498db solid 4px; border-radius:50%; animation:spin 1s linear infinite;"></div>
-            </div>
-            <p style="color:#666;">请确保 <code>components/page-editor.js</code> 已上传</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script type="module" src="app.js"></script>
+  <script src="preview.js"></script>
 </body>
 </html>
