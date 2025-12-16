@@ -200,26 +200,26 @@
       }
     }
 
-    // 渲染左侧导航
-    function renderPageList() {
-      const list = document.getElementById('pages-list');
-      list.innerHTML = pages.map((page, i) => `
-        <div class="page-item ${i === currentPageIndex ? 'active' : ''}" data-index="${i}">
-          <div class="page-title-small" title="${page.title || '未命名'}">
-            ${page.title || `页面 ${i+1}`}
-          </div>
-        </div>
-      `.join('');
-      list.querySelectorAll('.page-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const index = parseInt(item.dataset.index);
-          currentPageIndex = index;
-          loadPageIntoEditor(index);
-          renderPageList();
-        });
-      });
-    }
+   // 渲染左侧导航
+function renderPageList() {
+  const list = document.getElementById('pages-list');
+  list.innerHTML = pages.map((page, i) => `
+    <div class="page-item ${i === currentPageIndex ? 'active' : ''}" data-index="${i}">
+      <div class="page-title-small" title="${page.title || '未命名'}">
+        ${page.title || `页面 ${i + 1}`}
+      </div>
+    </div>
+  `).join(''); // ✅ 修复：map(...) 的括号闭合
 
+  list.querySelectorAll('.page-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const index = parseInt(item.dataset.index, 10);
+      currentPageIndex = index;
+      loadPageIntoEditor(index);
+      renderPageList();
+    });
+  });
+}
     // 加载页面到编辑器
     function loadPageIntoEditor(index) {
       renderPageEditor(pages[index], (updatedPage) => {
