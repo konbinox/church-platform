@@ -180,123 +180,165 @@
     let pages = [];
     let currentPageIndex = 0;
 
-    // 加载数据
-    async function loadMeetingData() {
-      try {
-        const res = await fetch('content/default-meeting.json');
-        meetingData = await res.json();
-        pages = Object.values(meetingData.pages || []);
-        renderPageList();
-        loadPageIntoEditor(0);
-      } catch (e) {
-        console.error('加载失败', e);
-        pages = Array.from({ length: 30 }, (_, i) => ({
-          id: `page${String(i+1).padStart(2, '0')}`,
-          title: `页面 ${i+1}`,
-          sections: [{ type: 'text', content: '内容待编辑...', style: { fontSize: '28px' } }]
-        }));
-        renderPageList();
-        loadPageIntoEditor(0);
-      }
+    // ====================
+    // 创建 DOM 元素（安全无模板字符串）
+    // ====================
+
+    function createPageItem(page, index, isActive) {
+      const item = document.createElement('div');
+      item.className = `page-item ${isActive ? 'active' : ''}`;
+      item.dataset.index = index;
+
+      const titleDiv = document.createElement('div');
+      titleDiv.className = 'page-title-small';
+      titleDiv.title = page.title || '未命名';
+      titleDiv.textContent = page.title || `页面 ${index + 1}`;
+
+      item.appendChild(titleDiv);
+      return item;
     }
 
-   // 渲染左侧导航
-function renderPageList() {
-  const list = document.getElementById('pages-list');
-  list.innerHTML = pages.map((page, i) => `
-    <div class="page-item ${i === currentPageIndex ? 'active' : ''}" data-index="${i}">
-      <div class="page-title-small" title="${page.title || '未命名'}">
-        ${page.title || `页面 ${i + 1}`}
-      </div>
-    </div>
-  `).join(''); // ✅ 修复：map(...) 的括号闭合
+    function renderPageList() {
+      const list = document.getElementById('pages-list');
+      list.innerHTML = '';
 
-  list.querySelectorAll('.page-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const index = parseInt(item.dataset.index, 10);
-      currentPageIndex = index;
-      loadPageIntoEditor(index);
-      renderPageList();
-    });
-  });
-}
-    // 加载页面到编辑器
-    function loadPageIntoEditor(index) {
-      renderPageEditor(pages[index], (updatedPage) => {
-        pages[index] = updatedPage;
-        // 更新 meetingData.pages
-        const keys = Object.keys(meetingData.pages || {});
-        meetingData.pages = {};
-        pages.forEach((p, i) => {
-          meetingData.pages[keys[i]] = p;
+      pages.forEach((page, i) => {
+        const item = createPageItem(page, i, i === currentPageIndex);
+        item.addEventListener('click', () => {
+          currentPageIndex = i;
+          loadPageIntoEditor(i);
+          renderPageList();
         });
+        list.appendChild(item);
       });
     }
 
-    // 初始化预览模式
-    function initPreviewMode() {
+    function renderPreviewNavigation() {
+      const list = document.getElementById('preview-pages-list');
+      list.innerHTML = '';
+
+      pages.forEach((page, i) => {
+        const item = createPageItem(page, i, i === currentPageIndex);
+        item.addEventListener('click', () => {
+          showPreviewPage(i);
+        });
+        list.appendChild(item);
+      });
+    }
+
+    function showPreviewPage(index) {
+      currentPageIndex = index;
+      const page = pages[index] || {};
+
+      // 标题
+      document.getElementById('preview-title').textContent = page.title || `页面 ${index + 1}`;
+
+      // 内容
+      const textEl = document.getElementById('preview-text');
+      if (page.sections && Array.isArray(page.sections)) {
+        let html = '';
+        for (const sec of page.sections) {
+          if (sec.content) {
+            const div = document.createElement('div');
+            if (sec.style) {
+              for (const [k, v] of Object.entries(sec.style)) {
+                div.style[k] = v;
+              }
+            }
+            div.innerHTML = sec.content.replace(/\n/g, '<br>');
+            html += div.outerHTML;
+          }
+        }
+        textEl.innerHTML = html;
+      } else {
+        textEl.textContent = '无内容';
+      }
+
+      // 背景
+      const bg = page.background || `slide${((index % 23) + 1).toString().padStart(2, '0')}.jpg`;
+      document.getElementById('preview-bg').style.backgroundImage = `url('assets/background/${bg}')`;
+
+      // 更新页码
+      document.getElementById('preview-current').textContent = index + 1;
+      renderPreviewNavigation(); // 重新高亮
+    }
+
+    // ====================
+    // 数据加载
+    // ====================
+
+    async function loadMeetingData() {
+      try {
+        const res = await fetch('content/default-meeting.json');
+        const data = await res.json();
+        meetingData = data;
+        pages = Object.values(data.pages || {});
+        if (pages.length === 0) throw new Error('No pages');
+      } catch (e) {
+        console.error('加载失败，使用默认30页', e);
+        pages = Array.from({ length: 30 }, (_, i) => ({
+          id: `page${String(i+1).padStart(2, '0')}`,
+          title: `页面 ${i+1}`,
+          sections: [{ content: '内容待编辑...', style: { fontSize: '28px' } }]
+        }));
+      }
+
       document.getElementById('preview-total').textContent = pages.length;
       document.getElementById('preview-total2').textContent = pages.length;
-      renderPreviewNavigation();
-      showPreviewPage(0);
-      document.addEventListener('keydown', handlePreviewKeydown);
-      document.getElementById('preview-pages-list').addEventListener('click', (e) => {
-        const item = e.target.closest('.page-item');
-        if (item) {
-          const index = parseInt(item.dataset.index);
-          showPreviewPage(index);
+
+      renderPageList();
+      loadPageIntoEditor(0);
+    }
+
+    function loadPageIntoEditor(index) {
+      renderPageEditor(pages[index], (updatedPage) => {
+        pages[index] = updatedPage;
+        // 重建 pages 对象以保留 key
+        if (meetingData.pages) {
+          const keys = Object.keys(meetingData.pages);
+          meetingData.pages = {};
+          pages.forEach((p, i) => {
+            meetingData.pages[keys[i]] = p;
+          });
         }
       });
     }
 
-   // 渲染预览导航
-function renderPreviewNavigation() {
-  const list = document.getElementById('preview-pages-list');
-  list.innerHTML = pages.map((page, i) => `
-    <div class="page-item" data-index="${i}">
-      <div class="page-title-small" title="${page.title || '未命名'}">
-        ${page.title || `页面 ${i + 1}`}
-      </div>
-    </div>
-  `).join(''); // ✅ 注意：).join('') —— ) 在 .join 之前！
-}
+    // ====================
+    // 预览模式
+    // ====================
 
-    // 显示预览页
-    function showPreviewPage(index) {
-      const page = pages[index];
-      document.getElementById('preview-title').textContent = page.title || '';
-      document.getElementById('preview-text').innerHTML = 
-        page.sections?.map(s => 
-          `<div style="${Object.entries(s.style||{}).map(([k,v])=>`${k}:${v}`).join(';')}">${s.content}</div>`
-        ).join('') || '无内容';
+    function initPreviewMode() {
+      document.getElementById('preview-container').style.display = 'block';
+      showPreviewPage(0);
 
-      const bg = page.background || `slide${((index % 23) + 1).toString().padStart(2, '0')}.jpg`;
-      document.getElementById('preview-bg').style.backgroundImage = `url('assets/background/${bg}')`;
-
-      document.querySelectorAll('#preview-pages-list .page-item').forEach((item, i) => {
-        item.classList.toggle('active', i === index);
-      });
-
-      document.getElementById('preview-current').textContent = index + 1;
+      // 键盘翻页
+      document.addEventListener('keydown', handlePreviewKeydown);
     }
 
-    // 预览快捷键
     function handlePreviewKeydown(e) {
       if (e.key === 'ArrowRight' || e.key === ' ') {
         showPreviewPage((currentPageIndex + 1) % pages.length);
       } else if (e.key === 'ArrowLeft') {
         showPreviewPage((currentPageIndex - 1 + pages.length) % pages.length);
       } else if (e.key === 'Escape') {
-        document.getElementById('toggle-mode').click();
+        exitPreviewMode();
       }
     }
 
-    // 切换模式
+    function exitPreviewMode() {
+      document.getElementById('preview-container').style.display = 'none';
+      document.removeEventListener('keydown', handlePreviewKeydown);
+    }
+
+    // ====================
+    // 初始化
+    // ====================
+
     document.getElementById('toggle-mode').addEventListener('click', function() {
       const isPreview = this.textContent.includes('预览');
       if (isPreview) {
         document.getElementById('editor-container').style.display = 'none';
-        document.getElementById('preview-container').style.display = 'block';
         document.body.classList.add('preview-mode');
         this.textContent = '返回编辑模式';
         initPreviewMode();
@@ -305,7 +347,7 @@ function renderPreviewNavigation() {
         document.getElementById('editor-container').style.display = 'block';
         document.body.classList.remove('preview-mode');
         this.textContent = '切换到全屏预览';
-        document.removeEventListener('keydown', handlePreviewKeydown);
+        exitPreviewMode();
       }
     });
 
