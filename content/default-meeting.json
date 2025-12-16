@@ -9,6 +9,7 @@
       "id": "page01",
       "title": "在耶穌裡我們是一家人",
       "type": "welcome",
+      "background": "slide01.jpg",
       "sections": [
         {
           "type": "text",
@@ -35,6 +36,7 @@
       "id": "page02",
       "title": "注意事項",
       "type": "notes",
+      "background": "slide02.jpg",
       "sections": [
         {
           "type": "text",
@@ -52,6 +54,7 @@
       "id": "page03",
       "title": "歡迎詩歌",
       "type": "song",
+      "background": "slide03.jpg",
       "sections": [
         {
           "type": "text",
@@ -69,6 +72,7 @@
       "id": "page04",
       "title": "敬拜讚美",
       "type": "worship-header",
+      "background": "slide04.jpg",
       "sections": [
         {
           "type": "text",
@@ -92,8 +96,9 @@
     },
     "page05": {
       "id": "page05",
-      "type": "sermon-title",
       "title": "跨越的人生",
+      "type": "sermon-title",
+      "background": "slide05.jpg",
       "sections": [
         {
           "type": "text",
@@ -108,8 +113,9 @@
     },
     "page06": {
       "id": "page06",
-      "type": "sermon-quote",
       "title": "劉彤牧師信息",
+      "type": "sermon-quote",
+      "background": "slide06.jpg",
       "sections": [
         {
           "type": "text",
@@ -135,6 +141,7 @@
       "id": "page07",
       "title": "专题：聖餐與短講",
       "type": "special-topic",
+      "background": "slide07.jpg",
       "sections": [
         {
           "type": "text",
@@ -151,10 +158,11 @@
       "id": "page08",
       "title": "慶祝十月份壽星",
       "type": "birthday",
+      "background": "slide08.jpg",
       "sections": [
         {
           "type": "text",
-          "content": "（1）宇嶸, 陳英<br>（2）慶林, 段冰, 王梅, 冉強, 潘婉玲, 王曉艷, 譚文婷<br>（3）楊庭英, 程浩<br><br>（7）張梓靖<br>（8）劉芳, 陳惠婷, 張俊<br>（10）趙琴, Joanne Chiang",
+          "content": "Daniel區長<br>(1) 宇嶸, 陳英<br>(2) 慶林, 段冰, 王梅, 冉強, 潘婉玲, 王曉艷, 譚文婷<br>(3) 楊庭英, 程浩<br>(7) 張梓靖<br>(8) 劉芳, 陳惠婷, 張俊<br>(10) 趙琴, Joanne Chiang",
           "style": {
             "fontSize": "30px",
             "lineHeight": "1.8",
@@ -168,6 +176,7 @@
       "id": "page09",
       "title": "大群見證故事／感恩時間",
       "type": "testimony-guide",
+      "background": "slide09.jpg",
       "sections": [
         {
           "type": "text",
@@ -194,6 +203,7 @@
       "id": "page10",
       "title": "今日經文",
       "type": "scripture",
+      "background": "slide10.jpg",
       "sections": [
         {
           "type": "text",
@@ -220,6 +230,7 @@
       "id": "page11",
       "title": "查經要點",
       "type": "study-outline",
+      "background": "slide11.jpg",
       "sections": [
         {
           "type": "text",
@@ -237,6 +248,7 @@
       "id": "page12",
       "title": "查經問題",
       "type": "study-questions",
+      "background": "slide12.jpg",
       "sections": [
         {
           "type": "text",
@@ -254,6 +266,7 @@
       "id": "page13",
       "title": "2025年第四季課程",
       "type": "course-title",
+      "background": "slide13.jpg",
       "sections": [
         {
           "type": "text",
@@ -270,6 +283,7 @@
       "id": "page14",
       "title": "課程內容（1–5）",
       "type": "course-content",
+      "background": "slide14.jpg",
       "sections": [
         {
           "type": "text",
@@ -287,6 +301,7 @@
       "id": "page15",
       "title": "課程內容（6–10）",
       "type": "course-content",
+      "background": "slide15.jpg",
       "sections": [
         {
           "type": "text",
@@ -299,29 +314,22 @@
           }
         }
       ]
-    },
-    "page16": {
+    }
+  }
+}    "page16": {
       "id": "page16",
       "title": "啟程福音課程時間",
       "type": "course-schedule",
+      "background": "slide16.jpg",
       "sections": [
         {
           "type": "text",
-          "content": "課程時間：<br>週日(美國,加拿大,墨西哥)<br>　美西時間：4:30 PM - 6:30 PM<br>　美中時間：6:30 PM - 8:30 PM<br>　美東時間：7:30 PM - 9:30 PM<br>　北京時間：週一 7:30 AM - 9:30 AM",
+          "content": "2025年第二期網絡啟程福音視訊課程（自9/7/2025始）<br>課程時間：週日（美國,加拿大,墨西哥）<br>　美西時間：4:30 PM - 6:30 PM<br>　美中時間：6:30 PM - 8:30 PM<br>　美東時間：7:30 PM - 9:30 PM<br>　北京時間：週一 7:30 AM - 9:30 AM<br><br>報名：ROLPLI.net",
           "style": {
             "fontSize": "28px",
             "lineHeight": "1.6",
             "textAlign": "center",
             "color": "#ffffff"
-          }
-        },
-        {
-          "type": "text",
-          "content": "報名：ROLPLI.net",
-          "style": {
-            "fontSize": "32px",
-            "textAlign": "center",
-            "color": "#3498db"
           }
         }
       ]
@@ -330,6 +338,7 @@
       "id": "page17",
       "title": "啟程 Zoom 連結",
       "type": "zoom-info",
+      "background": "slide17.jpg",
       "sections": [
         {
           "type": "text",
@@ -356,6 +365,7 @@
       "id": "page18",
       "title": "為啟程學員代禱（第1組）",
       "type": "prayer-list",
+      "background": "slide18.jpg",
       "sections": [
         {
           "type": "text",
@@ -373,6 +383,7 @@
       "id": "page19",
       "title": "為啟程學員代禱（第2組）",
       "type": "prayer-list",
+      "background": "slide19.jpg",
       "sections": [
         {
           "type": "text",
@@ -390,6 +401,7 @@
       "id": "page20",
       "title": "為啟程學員代禱（第3組）",
       "type": "prayer-list",
+      "background": "slide20.jpg",
       "sections": [
         {
           "type": "text",
@@ -407,6 +419,7 @@
       "id": "page21",
       "title": "為啟程學員代禱（第4–5組）",
       "type": "prayer-list",
+      "background": "slide21.jpg",
       "sections": [
         {
           "type": "text",
@@ -424,6 +437,7 @@
       "id": "page22",
       "title": "週末聖靈烈火敬拜/醫治禱告 訓練",
       "type": "fire-training",
+      "background": "slide22.jpg",
       "sections": [
         {
           "type": "text",
@@ -451,6 +465,7 @@
       "id": "page23",
       "title": "下周見",
       "type": "closing",
+      "background": "slide23.jpg",
       "sections": [
         {
           "type": "text",
@@ -467,50 +482,43 @@
       "id": "page24",
       "title": "預留頁 A - 臨時公告",
       "type": "reserved",
-      "sections": [],
-      "visible": false
+      "sections": []
     },
     "page25": {
       "id": "page25",
       "title": "預留頁 B - 家事報告",
       "type": "reserved",
-      "sections": [],
-      "visible": false
+      "sections": []
     },
     "page26": {
       "id": "page26",
       "title": "預留頁 C - 主持人備註",
       "type": "reserved",
-      "sections": [],
-      "visible": false
+      "sections": []
     },
     "page27": {
       "id": "page27",
       "title": "預留頁 D - 緊急通知",
       "type": "reserved",
-      "sections": [],
-      "visible": false
+      "sections": []
     },
     "page28": {
       "id": "page28",
       "title": "預留頁 E - 新增見證",
       "type": "reserved",
-      "sections": [],
-      "visible": false
+      "sections": []
     },
     "page29": {
       "id": "page29",
       "title": "預留頁 F - 特別禱告",
       "type": "reserved",
-      "sections": [],
-      "visible": false
+      "sections": []
     },
     "page30": {
       "id": "page30",
       "title": "預留頁 G - 未使用",
       "type": "reserved",
-      "sections": [],
-      "visible": false
+      "sections": []
     }
   }
 }
