@@ -138,7 +138,7 @@ class ChurchPlayer {
   document.getElementById('page-text').innerHTML = html;
   document.getElementById('current-page').textContent = pageIndex + 1;
   this.updateNavigationHighlight();
-}
+
   document.getElementById('page-text').innerHTML = html;
   this.updateNavigationHighlight();
 }
