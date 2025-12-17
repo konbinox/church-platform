@@ -109,10 +109,6 @@ class ChurchPlayer {
     });
   }
 
- showPage(pageIndex) {
-  const page = this.pagesData[pageIndex];
-  document.getElementById('page-title').textContent = page.title || `页面 ${pageIndex + 1}`;
-
   let html = '';
   
   // ✅ 如果有 sections，按区块渲染
