@@ -9,28 +9,58 @@
   }
 
   async init() {
+    console.log('开始初始化...');
     await this.loadMeetingData();
+    console.log('数据加载完成，页面数:', this.totalPages);
     this.initBackgroundSystem();
     this.renderNavigation();
     this.showPage(0);
     this.updateTime();
     this.setupEventListeners();
     window.churchPlayer = this;
-    console.log('教会聚会播放器已初始化');
+    console.log('初始化完成');
   }
 
   async loadMeetingData() {
     try {
+      console.log('正在加载会议数据...');
       const response = await fetch('content/default-meeting.json');
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
       const data = await response.json();
-      // 将 pages 对象转为数组
-      this.pagesData = Object.values(data.pages || {});
+      console.log('原始数据:', data);
+      
+      // 处理pages数据
+      if (data.pages && typeof data.pages === 'object') {
+        // 将对象转换为数组，并确保顺序
+        this.pagesData = Object.entries(data.pages)
+          .sort(([keyA], [keyB]) => {
+            // 按数字排序
+            const numA = parseInt(keyA.replace('page', ''));
+            const numB = parseInt(keyB.replace('page', ''));
+            return numA - numB;
+          })
+          .map(([key, value]) => ({
+            id: key,
+            ...value
+          }));
+      } else {
+        this.pagesData = data.pages || [];
+      }
+      
       this.totalPages = this.pagesData.length;
-      document.getElementById('total-pages').textContent = this.totalPages;
-      document.getElementById('total-pages-display').textContent = this.totalPages;
-      console.log(`加载了 ${this.totalPages} 个页面`);
+      console.log('处理后页面数据:', this.pagesData);
+      
+      // 更新UI
+      const totalPagesEl = document.getElementById('total-pages');
+      const totalPagesDisplayEl = document.getElementById('total-pages-display');
+      
+      if (totalPagesEl) totalPagesEl.textContent = this.totalPages;
+      if (totalPagesDisplayEl) totalPagesDisplayEl.textContent = this.totalPages;
+      
     } catch (error) {
-      console.error('加载聚会数据失败，使用默认数据:', error);
+      console.error('加载失败，使用默认数据:', error);
       this.pagesData = this.getDefaultPages();
       this.totalPages = this.pagesData.length;
     }
@@ -38,13 +68,14 @@
 
   getDefaultPages() {
     return Array.from({ length: 30 }, (_, i) => ({
-      id: i + 1,
+      id: `page${i + 1}`,
       title: `页面 ${i + 1}`,
-      content: `这是第 ${i + 1} 页的内容...`,
+      content: `这是第 ${i + 1} 页的默认内容...`,
       type: 'text'
     }));
   }
 
+  // ... 其他方法保持不变（从之前正确的版本复制）
   initBackgroundSystem() {
     this.setBackgroundImage(1);
     this.updateBgInfo();
@@ -87,7 +118,10 @@
 
   renderNavigation() {
     const pagesList = document.getElementById('pages-list');
-    if (!pagesList) return;
+    if (!pagesList) {
+      console.error('找不到 pages-list 元素');
+      return;
+    }
     
     pagesList.innerHTML = '';
 
@@ -108,16 +142,27 @@
         </div>
       `;
       
-      pageItem.addEventListener('click', () => this.showPage(index));
+      pageItem.addEventListener('click', () => {
+        console.log('点击页面:', index);
+        this.showPage(index);
+      });
       pagesList.appendChild(pageItem);
     });
+    
+    console.log('导航渲染完成，项目数:', this.pagesData.length);
   }
 
   showPage(pageIndex) {
-    if (pageIndex < 0 || pageIndex >= this.totalPages) return;
+    console.log('显示页面:', pageIndex);
+    
+    if (pageIndex < 0 || pageIndex >= this.totalPages) {
+      console.error('页面索引超出范围:', pageIndex);
+      return;
+    }
     
     this.currentPage = pageIndex;
     const page = this.pagesData[pageIndex];
+    console.log('页面数据:', page);
     
     // 更新页面标题
     const pageTitleElement = document.getElementById('page-title');
@@ -190,6 +235,7 @@
   }
 
   openEditor() {
+    console.log('打开编辑器');
     const editorModal = document.getElementById('editor-modal');
     if (editorModal) {
       editorModal.style.display = 'block';
@@ -198,6 +244,7 @@
   }
 
   closeEditor() {
+    console.log('关闭编辑器');
     const editorModal = document.getElementById('editor-modal');
     if (editorModal) {
       editorModal.style.display = 'none';
@@ -209,6 +256,7 @@
   }
 
   async loadProfessionalEditor() {
+    console.log('加载专业编辑器...');
     try {
       const loadingElement = document.getElementById('editor-loading');
       const editorComponent = document.getElementById('editor-component');
@@ -216,8 +264,10 @@
       if (loadingElement) loadingElement.style.display = 'flex';
       if (editorComponent) editorComponent.style.display = 'none';
 
+      // 动态导入编辑器
       const module = await import('./components/page-editor.js');
       window.pageEditorModule = module;
+      console.log('编辑器模块加载成功');
 
       if (loadingElement) loadingElement.style.display = 'none';
       if (editorComponent) {
@@ -231,7 +281,11 @@
         editorComponent.innerHTML = `
           <div style="padding:40px; text-align:center; color:#e74c3c;">
             <h3>编辑器加载失败</h3>
-            <p>请检查 components/page-editor.js 是否已上传到仓库</p>
+            <p>错误: ${error.message}</p>
+            <p>请检查 components/page-editor.js 是否已上传</p>
+            <button onclick="window.churchPlayer?.closeEditor()" style="padding:10px 20px; margin-top:20px;">
+              关闭
+            </button>
           </div>
         `;
       }
@@ -239,18 +293,32 @@
   }
 
   renderEditor() {
+    console.log('渲染编辑器');
     const container = document.getElementById('editor-component');
-    if (!container) return;
+    if (!container) {
+      console.error('找不到 editor-component');
+      return;
+    }
     
     const currentPage = this.pagesData[this.currentPage] || {};
+    console.log('当前页面数据:', currentPage);
     container.innerHTML = '<div id="editor-container"></div>';
     
     if (window.pageEditorModule?.renderPageEditor) {
       window.pageEditorModule.renderPageEditor(currentPage, (updatedPage) => {
+        console.log('页面更新:', updatedPage);
         this.pagesData[this.currentPage] = updatedPage;
         this.renderNavigation();
         this.showPage(this.currentPage);
       });
+    } else {
+      console.error('pageEditorModule.renderPageEditor 不存在');
+      container.innerHTML = `
+        <div style="padding:20px;">
+          <h3>编辑器函数不存在</h3>
+          <p>请检查 components/page-editor.js 是否正确导出了 renderPageEditor 函数</p>
+        </div>
+      `;
     }
   }
 
@@ -266,8 +334,16 @@
 }
 
 // 全局函数供 HTML 调用
-window.prevPage = () => window.churchPlayer?.prevPage();
-window.nextPage = () => window.churchPlayer?.nextPage();
+window.prevPage = () => {
+  console.log('上一页按钮点击');
+  window.churchPlayer?.prevPage();
+};
+
+window.nextPage = () => {
+  console.log('下一页按钮点击');
+  window.churchPlayer?.nextPage();
+};
+
 window.prevBackground = () => window.churchPlayer?.prevBackground();
 window.nextBackground = () => window.churchPlayer?.nextBackground();
 window.openEditor = () => window.churchPlayer?.openEditor();
@@ -275,5 +351,14 @@ window.closeEditor = () => window.churchPlayer?.closeEditor();
 
 // 页面加载完成后初始化
 window.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM加载完成，开始初始化播放器');
   new ChurchPlayer();
 });
+
+// 调试：暴露到全局
+window.debugChurchPlayer = () => {
+  console.log('调试信息:');
+  console.log('churchPlayer:', window.churchPlayer);
+  console.log('pagesData:', window.churchPlayer?.pagesData);
+  console.log('totalPages:', window.churchPlayer?.totalPages);
+};
