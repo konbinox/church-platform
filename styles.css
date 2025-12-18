@@ -426,3 +426,68 @@ body {
         justify-content: center;
     }
 }
+
+/* ===== 页面内容居中 ===== */
+.page-content {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+}
+
+#page-text {
+    text-align: center !important;
+    max-width: 900px !important;
+    width: 90% !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+/* 标题居中 */
+.page-title {
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* 控制栏居中 */
+.controls {
+    justify-content: center !important;
+    gap: 30px !important;
+}
+
+.control-group {
+    justify-content: center !important;
+}
+
+/* 响应式居中 */
+@media (max-width: 768px) {
+    #page-text {
+        width: 95% !important;
+        padding: 15px !important;
+    }
+    
+    .page-title {
+        font-size: 28px !important;
+        text-align: center !important;
+    }
+}
+
+/* 编辑器居中样式 */
+#editor-component > div {
+    max-width: 800px !important;
+    margin: 0 auto !important;
+}
+
+#editor-component input,
+#editor-component textarea {
+    text-align: center !important;
+}
+
+#editor-component h2,
+#editor-component h3 {
+    text-align: center !important;
+}
