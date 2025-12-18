@@ -107,13 +107,29 @@
   }
 
   getPagePreviewText(page) {
+
+  // 增强的页面预览文本提取
+  getPagePreviewText(page) {
+    // 1. 如果有sections，提取第一个section的内容
+    if (Array.isArray(page.sections) && page.sections.length > 0) {
+      const firstSection = page.sections[0];
+      
+      // 从section中提取内容
+      if (firstSection.content) return firstSection.content;
+      if (firstSection.text) return firstSection.text;
+      if (Array.isArray(firstSection.items)) return firstSection.items[0] || '无内容';
+      if (Array.isArray(firstSection.groups)) return firstSection.groups[0]?.text || '无内容';
+    }
+    
+    // 2. 回退到原逻辑
     if (page.content) return page.content;
     if (page.lyrics) return page.lyrics;
     if (Array.isArray(page.items)) return page.items.join(' | ');
     if (Array.isArray(page.groups)) return page.groups.join(' | ');
     if (page.text) return page.text;
     if (page.quote) return page.quote;
-    return '无内容';
+    
+    return '无内容...';
   }
 
   renderNavigation() {
@@ -153,12 +169,99 @@
   }
 
   showPage(pageIndex) {
+  showPage(pageIndex) {
     console.log('显示页面:', pageIndex);
     
     if (pageIndex < 0 || pageIndex >= this.totalPages) {
       console.error('页面索引超出范围:', pageIndex);
       return;
     }
+    
+    this.currentPage = pageIndex;
+    const page = this.pagesData[pageIndex];
+    console.log('页面数据:', page);
+    console.log('页面sections:', page.sections);
+    
+    // 更新页面标题
+    const pageTitleElement = document.getElementById('page-title');
+    if (pageTitleElement) {
+      pageTitleElement.textContent = page.title || `页面 ${pageIndex + 1}`;
+    }
+    
+    // 更新页面内容
+    const pageTextElement = document.getElementById('page-text');
+    if (pageTextElement) {
+      let html = '';
+      
+      //  修复：正确处理sections
+      if (Array.isArray(page.sections) && page.sections.length > 0) {
+        console.log('使用sections渲染');
+        html = page.sections.map(section => {
+          console.log('处理section:', section);
+          
+          // 获取内容
+          let content = section.content || section.text || '';
+          
+          // 如果有items数组
+          if (Array.isArray(section.items) && section.items.length > 0) {
+            content = section.items.join('<br>');
+          }
+          
+          // 如果有groups数组
+          if (Array.isArray(section.groups) && section.groups.length > 0) {
+            content = section.groups.map(group => {
+              if (typeof group === 'string') return group;
+              if (group.text) return group.text;
+              return '';
+            }).join('<br>');
+          }
+          
+          // 应用样式
+          let styleStr = '';
+          if (section.style && typeof section.style === 'object') {
+            styleStr = Object.entries(section.style)
+              .map(([key, value]) => `${key}:${value}`)
+              .join(';');
+          }
+          
+          // 如果有特定类型处理
+          if (section.type === 'title' || section.style?.fontSize > '24px') {
+            return `<h2 style="${styleStr}">${content.replace(/\n/g, '<br>')}</h2>`;
+          } else if (section.type === 'lyrics') {
+            return `<div style="${styleStr}; font-style: italic; text-align: center;">${content.replace(/\n/g, '<br>')}</div>`;
+          } else {
+            return `<div style="${styleStr}">${content.replace(/\n/g, '<br>')}</div>`;
+          }
+        }).join('');
+      } 
+      //  如果没有sections，使用旧方式
+      else {
+        console.log('使用旧方式渲染');
+        html = this.getPagePreviewText(page).replace(/\n/g, '<br>');
+      }
+      
+      console.log('最终HTML:', html);
+      pageTextElement.innerHTML = html;
+    }
+    
+    // 更新当前页码显示
+    const currentPageElement = document.getElementById('current-page');
+    if (currentPageElement) {
+      currentPageElement.textContent = pageIndex + 1;
+    }
+    
+    // 更新导航高亮
+    this.updateNavigationHighlight();
+    
+    // 如果有背景图片，设置背景
+    if (page.background) {
+      const bgElement = document.getElementById('background-layer');
+      if (bgElement) {
+        bgElement.style.backgroundImage = `url('assets/background/${page.background}')`;
+      }
+    }
+  }
+  }
     
     this.currentPage = pageIndex;
     const page = this.pagesData[pageIndex];
