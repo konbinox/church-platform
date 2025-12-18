@@ -110,3 +110,23 @@
     </script>
 </body>
 </html>
+<script>
+// 调试脚本
+window.addEventListener('load', function() {
+    console.log('页面加载完成');
+    
+    // 检查背景元素
+    const bg = document.getElementById('background-layer');
+    console.log('背景元素:', bg);
+    console.log('背景样式:', bg ? bg.style.backgroundImage : '无');
+    
+    // 检查图片路径
+    console.log('检查assets目录是否存在...');
+    
+    // 临时设置一个在线背景图作为测试
+    if (bg && (!bg.style.backgroundImage || bg.style.backgroundImage === 'none')) {
+        console.log('使用在线测试背景图');
+        bg.style.backgroundImage = 'url(https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80)';
+    }
+});
+</script>
