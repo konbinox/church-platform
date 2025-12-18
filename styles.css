@@ -1,4 +1,4 @@
-﻿/* 重置和基础样式 */
+﻿/* 简化版本 - 内容直接显示在背景上 */
 * {
     margin: 0;
     padding: 0;
@@ -7,10 +7,11 @@
 
 body {
     font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
-    background: #1a1a1a;
-    color: #333;
+    background: #000;
+    color: white;
     height: 100vh;
     overflow: hidden;
+    position: relative;
 }
 
 #background-layer {
@@ -19,41 +20,52 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #000;
     background-size: cover;
     background-position: center;
-    z-index: -1;
+    background-repeat: no-repeat;
+    z-index: 1;
 }
 
-/* 主容器 */
+/* 半透明遮罩，让文字更清晰 */
+#background-layer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 2;
+}
+
+/* 主容器 - 直接放在背景上 */
 .container {
     display: flex;
     height: 100vh;
-    padding: 20px;
-    gap: 20px;
+    position: relative;
+    z-index: 3;
 }
 
-/* 左侧导航 */
+/* 左侧导航 - 半透明效果 */
 .sidebar-nav {
     width: 300px;
-    background: rgba(30, 30, 30, 0.9);
-    border-radius: 15px;
-    padding: 20px;
+    background: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1);
+    padding: 20px;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
 }
 
 .nav-header {
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .nav-header h3 {
-    color: #fff;
+    color: white;
     font-size: 20px;
     margin-bottom: 8px;
     display: flex;
@@ -80,7 +92,7 @@ body {
 
 .page-item {
     background: rgba(50, 50, 50, 0.7);
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 12px;
     margin-bottom: 10px;
     cursor: pointer;
@@ -94,19 +106,19 @@ body {
 }
 
 .page-item.active {
-    background: rgba(52, 152, 219, 0.3);
+    background: rgba(52, 152, 219, 0.4);
     border-left-color: #3498db;
 }
 
 .page-thumbnail {
-    background: rgba(0,0,0,0.3);
+    background: rgba(0, 0, 0, 0.4);
     border-radius: 6px;
     padding: 8px;
     margin-bottom: 8px;
 }
 
 .thumbnail-content {
-    color: #bdc3c7;
+    color: #ecf0f1;
     font-size: 12px;
     line-height: 1.4;
     max-height: 40px;
@@ -117,7 +129,7 @@ body {
 }
 
 .page-title-small {
-    color: #fff;
+    color: white;
     font-size: 14px;
     font-weight: bold;
     white-space: nowrap;
@@ -129,129 +141,156 @@ body {
 .nav-footer {
     margin-top: 20px;
     padding-top: 15px;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* 主内容区域 */
+/* 主内容区域 - 直接显示在背景上，没有白色底版 */
 .main-content {
     flex: 1;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    overflow: hidden;
+    padding: 40px;
+    position: relative;
+    z-index: 3;
 }
 
+/* 页面头部 - 半透明 */
 .page-header {
-    background: #2c3e50;
-    color: white;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
     padding: 20px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin-bottom: 30px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .page-title {
-    font-size: 24px;
+    font-size: 36px;
     font-weight: bold;
-    margin: 0;
+    color: white;
+    margin: 0 0 10px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .page-info {
     display: flex;
     align-items: center;
-    gap: 20px;
-    color: #bdc3c7;
+    gap: 25px;
+    color: #ecf0f1;
+    font-size: 16px;
 }
 
 #current-time {
     font-family: 'Courier New', monospace;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
+    color: #3498db;
 }
 
-/* 页面内容区域 */
+/* 页面内容 - 直接显示在背景上 */
 .page-content {
     flex: 1;
-    padding: 30px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    padding: 40px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     overflow-y: auto;
-    background: #fff;
 }
 
 #page-text {
-    font-size: 20px;
+    font-size: 28px;
     line-height: 1.8;
-    color: #2c3e50;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     min-height: 300px;
 }
 
-#page-text h1, #page-text h2, #page-text h3 {
-    color: #2c3e50;
-    margin-top: 20px;
-    margin-bottom: 15px;
+#page-text h1 {
+    font-size: 42px;
+    color: #3498db;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#page-text h2 {
+    font-size: 36px;
+    color: #2ecc71;
+    margin: 20px 0 15px 0;
+}
+
+#page-text h3 {
+    font-size: 30px;
+    color: #e74c3c;
+    margin: 18px 0 12px 0;
 }
 
 #page-text p {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    font-size: 26px;
 }
 
-/* 控制栏 */
+/* 控制栏 - 半透明 */
 .controls {
-    background: #f8f9fa;
-    padding: 15px 30px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 15px;
+    padding: 20px 30px;
+    margin-top: 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid #dee2e6;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .control-group {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
 }
 
 .bg-info, .page-num {
-    color: #6c757d;
+    color: white;
     font-weight: bold;
-    padding: 5px 10px;
-    background: white;
-    border-radius: 5px;
-    border: 1px solid #dee2e6;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 16px;
 }
 
-/* 按钮样式 */
+/* 按钮样式 - 透明效果 */
 .btn {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: bold;
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    font-size: 14px;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #3498db, #2980b9);
+    gap: 10px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.15);
     color: white;
-}
-
-.btn-secondary {
-    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
-    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .btn:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
+}
+
+.btn i {
+    font-size: 18px;
 }
 
 /* 编辑器模态框 */
@@ -262,31 +301,34 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.9);
     z-index: 1000;
     justify-content: center;
     align-items: center;
 }
 
 .modal-content {
-    background: white;
+    background: rgba(30, 30, 30, 0.95);
     border-radius: 15px;
     width: 90%;
     max-width: 900px;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
 .modal-header {
-    background: #2c3e50;
+    background: rgba(44, 62, 80, 0.9);
     color: white;
     padding: 20px;
     border-radius: 15px 15px 0 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .modal-header h2 {
@@ -316,34 +358,62 @@ body {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
+    color: white;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(52, 152, 219, 0.6);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(52, 152, 219, 0.8);
 }
 
 /* 响应式调整 */
 @media (max-width: 1200px) {
-    .container {
-        padding: 10px;
-    }
-    
     .sidebar-nav {
         width: 250px;
+    }
+    
+    #page-text {
+        font-size: 24px;
     }
 }
 
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
-        padding: 10px;
     }
     
     .sidebar-nav {
         width: 100%;
-        margin-bottom: 10px;
+        height: 200px;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+    .main-content {
+        padding: 20px;
+    }
+    
+    .page-title {
+        font-size: 28px;
+    }
+    
+    #page-text {
+        font-size: 20px;
+        padding: 20px;
     }
     
     .controls {
@@ -355,23 +425,4 @@ body {
         width: 100%;
         justify-content: center;
     }
-}
-
-/* 滚动条样式 */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.1);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(52, 152, 219, 0.5);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(52, 152, 219, 0.8);
 }

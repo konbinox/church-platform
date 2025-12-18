@@ -6,7 +6,6 @@
     <title>教会聚会播放器</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="styles/player.css">
 </head>
 <body>
     <div id="background-layer"></div>
@@ -22,7 +21,7 @@
                 <!-- 页面缩略图将由JavaScript动态生成 -->
             </div>
             <div class="nav-footer">
-                <button class="btn btn-secondary" onclick="window.openEditor()">
+                <button class="btn" onclick="window.openEditor()">
                     <i class="fas fa-edit"></i> 编辑页面
                 </button>
             </div>
@@ -47,25 +46,25 @@
             <!-- 控制栏 -->
             <div class="controls">
                 <div class="control-group">
-                    <button class="btn btn-secondary" onclick="window.prevBackground()">
-                        <i class="fas fa-image"></i> 上一背景
+                    <button class="btn" onclick="window.prevBackground()">
+                        <i class="fas fa-chevron-left"></i> 背景
                     </button>
                     <span class="bg-info">
-                        背景: <span id="bg-current">1</span>/<span id="bg-total">23</span>
+                        <span id="bg-current">1</span>/<span id="bg-total">23</span>
                     </span>
-                    <button class="btn btn-secondary" onclick="window.nextBackground()">
-                        <i class="fas fa-image"></i> 下一背景
+                    <button class="btn" onclick="window.nextBackground()">
+                        <i class="fas fa-chevron-right"></i> 背景
                     </button>
                 </div>
                 
                 <div class="control-group">
-                    <button class="btn btn-primary" onclick="window.prevPage()">
+                    <button class="btn" onclick="window.prevPage()">
                         <i class="fas fa-chevron-left"></i> 上一页
                     </button>
                     <span class="page-num">
                         <span id="current-page-display">1</span> / <span id="total-pages-display2">30</span>
                     </span>
-                    <button class="btn btn-primary" onclick="window.nextPage()">
+                    <button class="btn" onclick="window.nextPage()">
                         <i class="fas fa-chevron-right"></i> 下一页
                     </button>
                 </div>
@@ -74,15 +73,15 @@
     </div>
 
     <!-- 编辑器模态框 -->
-    <div id="editor-modal" class="modal" style="display: none;">
+    <div id="editor-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>专业页面编辑器</h2>
+                <h2>页面编辑器</h2>
                 <button class="close-btn" onclick="window.closeEditor()">&times;</button>
             </div>
             <div class="modal-body">
                 <div id="editor-loading" style="display: none; justify-content: center; align-items: center; height: 200px;">
-                    正在加载专业编辑器...
+                    加载中...
                 </div>
                 <div id="editor-component">
                     <!-- 编辑器将在这里加载 -->
@@ -94,19 +93,17 @@
     <script type="module" src="app.js"></script>
     
     <script>
-        // 确保全局函数在app.js加载前就存在（防止报错）
+        // 全局函数
         window.openEditor = function() {
-            if (window.churchPlayer && typeof window.churchPlayer.openEditor === 'function') {
+            if (window.churchPlayer) {
                 window.churchPlayer.openEditor();
             } else {
-                console.log('播放器尚未初始化，请稍后重试');
-                // 显示提示
-                alert('播放器正在初始化，请稍后再试...');
+                console.log('播放器正在初始化...');
             }
         };
         
         window.closeEditor = function() {
-            if (window.churchPlayer && typeof window.churchPlayer.closeEditor === 'function') {
+            if (window.churchPlayer) {
                 window.churchPlayer.closeEditor();
             }
         };
