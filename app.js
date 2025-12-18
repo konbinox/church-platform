@@ -35,8 +35,8 @@
   getDefaultPages() {
     return Array.from({ length: 30 }, (_, i) => ({
       id: i + 1,
-      title: `页面 ${i + 1}`,
-      content: `这是第 ${i + 1} 页的内容...`,
+      title: '页面 ' + (i + 1),
+      content: '这是第 ' + (i + 1) + ' 页的内容...',
       type: 'text'
     }));
   }
@@ -48,8 +48,7 @@
 
   setBackgroundImage(index) {
     const bgIndex = ((index - 1) % this.totalBackgrounds) + 1;
-    document.getElementById('background-layer').style.backgroundImage = 
-      `url('assets/background/slide${bgIndex}.jpg')`;
+    document.getElementById('background-layer').style.backgroundImage = 'url(\'assets/background/slide' + bgIndex + '.jpg\')';
     this.currentBackgroundIndex = bgIndex;
     this.updateBgInfo();
   }
@@ -89,14 +88,8 @@
       const preview = this.getPagePreviewText(page);
       const thumbnailContent = preview.substring(0, 80).replace(/\n/g, ' ') + '...';
 
-      pageItem.innerHTML = `
-        <div class="page-thumbnail">
-          <div class="thumbnail-content">${thumbnailContent}</div>
-        </div>
-        <div class="page-title-small" title="${page.title || '未命名'}">
-          ${page.title || `页面 ${index + 1}`}
-        </div>
-      `;
+      pageItem.innerHTML = '<div class="page-thumbnail"><div class="thumbnail-content">' + thumbnailContent + '</div></div><div class="page-title-small" title="' + (page.title || '未命名') + '">' + (page.title || '页面 ' + (index + 1)) + '</div>';
+      
       pageItem.addEventListener('click', () => this.showPage(index));
       pagesList.appendChild(pageItem);
     });
@@ -108,22 +101,18 @@
     this.currentPage = pageIndex;
     const page = this.pagesData[pageIndex];
     
-    // 更新标题
-    document.getElementById('page-title').textContent = page.title || `页面 ${pageIndex + 1}`;
+    document.getElementById('page-title').textContent = page.title || '页面 ' + (pageIndex + 1);
     
-    // 更新内容 - 简化处理
     const pageTextElement = document.getElementById('page-text');
     if (pageTextElement) {
       let content = '';
       
-      // 尝试各种可能的内容字段
       if (page.content) content = page.content;
       else if (page.text) content = page.text;
       else if (Array.isArray(page.items)) content = page.items.join('<br>');
       else if (Array.isArray(page.groups)) content = page.groups.join('<br>');
       else if (page.lyrics) content = page.lyrics;
       
-      // 如果有sections，使用第一个section
       if (!content && Array.isArray(page.sections) && page.sections.length > 0) {
         const section = page.sections[0];
         if (section.content) content = section.content;
@@ -134,10 +123,8 @@
       pageTextElement.innerHTML = content ? content.replace(/\n/g, '<br>') : '无内容...';
     }
     
-    // 更新页码
     document.getElementById('current-page').textContent = pageIndex + 1;
     
-    // 更新导航高亮
     this.updateNavigationHighlight();
   }
 
@@ -157,8 +144,7 @@
 
   updateTime() {
     const now = new Date();
-    document.getElementById('current-time').textContent = 
-      now.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    document.getElementById('current-time').textContent = now.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit' });
     setTimeout(() => this.updateTime(), 1000);
   }
 
@@ -171,96 +157,12 @@
     document.getElementById('editor-modal').style.display = 'none';
   }
 
-
   async loadProfessionalEditor() {
-    console.log('开始加载编辑器...');
-    const editorComponent = document.getElementById('editor-component');
-    const loadingElement = document.getElementById('editor-loading');
-    
-    if (loadingElement) {
-      loadingElement.style.display = 'flex';
-      loadingElement.innerHTML = '<div style="font-size: 18px; color: #666;">加载编辑器中...</div>';
-    }
-    
-    if (editorComponent) {
-      editorComponent.style.display = 'none';
-    }
-    
     try {
-      // 等待一小段时间确保UI更新
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
       const module = await import('./components/page-editor.js');
       window.pageEditorModule = module;
-      console.log('编辑器模块加载成功');
-      
-      if (loadingElement) loadingElement.style.display = 'none';
-      if (editorComponent) {
-        editorComponent.style.display = 'block';
-        this.renderEditor();
-      }
+      this.renderEditor();
     } catch (error) {
-      console.error('编辑器加载失败:', error);
-      
-      if (loadingElement) {
-        loadingElement.style.display = 'none';
-      }
-      
-      if (editorComponent) {
-        editorComponent.style.display = 'block';
-        editorComponent.innerHTML = \`
-          <div style="padding: 40px; text-align: center; color: #333;">
-            <h3 style="color: #4CAF50;">简易编辑器</h3>
-            <p>专业编辑器加载失败，使用简易版本</p>
-            
-            <div style="margin-top: 30px; text-align: left; background: #f9f9f9; padding: 20px; border-radius: 8px;">
-              <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">页面标题</label>
-                <input type="text" id="simple-editor-title" 
-                       value="\${this.pagesData[this.currentPage]?.title || ''}"
-                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-              </div>
-              
-              <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">页面内容</label>
-                <textarea id="simple-editor-content" rows="10"
-                          style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-\${this.pagesData[this.currentPage]?.content || this.pagesData[this.currentPage]?.text || ''}</textarea>
-              </div>
-              
-              <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button onclick="window.churchPlayer?.saveSimpleEditor()" 
-                        style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                  保存
-                </button>
-                <button onclick="window.churchPlayer?.closeEditor()"
-                        style="padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                  取消
-                </button>
-              </div>
-            </div>
-          </div>
-        \`;
-      }
-    }
-  }
-
-  saveSimpleEditor() {
-    const titleInput = document.getElementById('simple-editor-title');
-    const contentInput = document.getElementById('simple-editor-content');
-    
-    if (titleInput && contentInput) {
-      this.pagesData[this.currentPage] = {
-        ...this.pagesData[this.currentPage],
-        title: titleInput.value,
-        content: contentInput.value
-      };
-      
-      this.renderNavigation();
-      this.showPage(this.currentPage);
-      this.closeEditor();
-    }
-  }
       console.error('加载编辑器失败:', error);
     }
   }
@@ -270,7 +172,7 @@
     if (!container) return;
     
     const currentPage = this.pagesData[this.currentPage] || {};
-    container.innerHTML = '<div>编辑器加载中...</div>';
+    container.innerHTML = '<div style="padding:20px;">编辑器加载中...</div>';
   }
 
   setupEventListeners() {
