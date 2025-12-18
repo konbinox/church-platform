@@ -1,92 +1,115 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生命河教会网络聚会</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>教会聚会播放器</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles/player.css">
 </head>
 <body>
-    <!-- 左侧导航 -->
-    <div class="sidebar-nav">
-        <div class="nav-header">
-            <h3><i class="fas fa-list"></i> 聚会页面</h3>
-            <div class="page-count">共 <span id="total-pages">30</span> 页</div>
+    <div id="background-layer"></div>
+    
+    <div class="container">
+        <!-- 左侧导航 -->
+        <div class="sidebar-nav">
+            <div class="nav-header">
+                <h3><i class="fas fa-list"></i> 聚会页面</h3>
+                <div class="page-count">共 <span id="total-pages">30</span> 页</div>
+            </div>
+            <div class="pages-list" id="pages-list">
+                <!-- 页面缩略图将由JavaScript动态生成 -->
+            </div>
+            <div class="nav-footer">
+                <button class="btn btn-secondary" onclick="window.openEditor()">
+                    <i class="fas fa-edit"></i> 编辑页面
+                </button>
+            </div>
         </div>
-        <div class="pages-list" id="pages-list">
-            <!-- 缩略图会由JavaScript动态生成 -->
-        </div>
-    </div>
 
-    <!-- 主显示区域 -->
-    <div class="main-content">
-        <!-- 背景层 -->
-        <div id="background-layer" class="background-layer"></div>
-        
-        <!-- 内容容器 -->
-        <div class="content-container">
-            <!-- 时间显示 -->
-            <div id="current-time" class="time-display"></div>
-            
-            <!-- 页面内容 -->
-            <div class="page-content">
-                <h1 id="page-title">加载中...</h1>
-                <div id="page-text" class="page-text">正在加载页面内容...</div>
-                <div class="page-number">
-                    第 <span id="current-page">1</span> 页 / 共 <span id="total-pages-display">30</span> 页
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title" id="page-title">加载中...</h1>
+                <div class="page-info">
+                    <span id="current-time">--:--</span>
+                    <span>第 <span id="current-page">1</span> / <span id="total-pages-display">30</span> 页</span>
                 </div>
             </div>
-            
-            <!-- 控制按钮 -->
-            <div class="control-buttons">
-                <div class="bg-control-group">
-                    <button class="bg-control-btn" onclick="window.prevBackground()" title="上一背景">
-                        <i class="fas fa-chevron-left"></i>
+
+            <div class="page-content">
+                <div id="page-text">
+                    正在加载页面内容...
+                </div>
+            </div>
+
+            <!-- 控制栏 -->
+            <div class="controls">
+                <div class="control-group">
+                    <button class="btn btn-secondary" onclick="window.prevBackground()">
+                        <i class="fas fa-image"></i> 上一背景
                     </button>
-                    <div class="bg-info">
-                        <span id="bg-current">1</span> / <span id="bg-total">23</span>
-                    </div>
-                    <button class="bg-control-btn" onclick="window.nextBackground()" title="下一背景">
-                        <i class="fas fa-chevron-right"></i>
+                    <span class="bg-info">
+                        背景: <span id="bg-current">1</span>/<span id="bg-total">23</span>
+                    </span>
+                    <button class="btn btn-secondary" onclick="window.nextBackground()">
+                        <i class="fas fa-image"></i> 下一背景
                     </button>
                 </div>
                 
-                <button class="control-btn" onclick="window.prevPage()" title="上一页 (←)">
-                    <i class="fas fa-arrow-left"></i> 上一页
-                </button>
-                <button class="control-btn" onclick="window.nextPage()" title="下一页 (→)">
-                    下一页 <i class="fas fa-arrow-right"></i>
-                </button>
+                <div class="control-group">
+                    <button class="btn btn-primary" onclick="window.prevPage()">
+                        <i class="fas fa-chevron-left"></i> 上一页
+                    </button>
+                    <span class="page-num">
+                        <span id="current-page-display">1</span> / <span id="total-pages-display2">30</span>
+                    </span>
+                    <button class="btn btn-primary" onclick="window.nextPage()">
+                        <i class="fas fa-chevron-right"></i> 下一页
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- 右下角编辑按钮 -->
-    <button class="edit-btn" onclick="window.openEditor()" title="编辑页面">
-        <i class="fas fa-cog"></i>
-    </button>
 
     <!-- 编辑器模态框 -->
-    <div id="editor-modal" class="editor-modal">
-        <div class="editor-container">
-            <div class="editor-content">
-                <!-- 加载状态 -->
-                <div id="editor-loading" class="editor-loading">
-                    <div class="loading-spinner"></div>
-                    <p>正在加载专业编辑器...</p>
+    <div id="editor-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>专业页面编辑器</h2>
+                <button class="close-btn" onclick="window.closeEditor()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="editor-loading" style="display: none; justify-content: center; align-items: center; height: 200px;">
+                    正在加载专业编辑器...
                 </div>
-                
-                <!-- 编辑器组件容器 -->
-                <div id="editor-component" style="display: none;"></div>
-                
-                <!-- 错误状态 -->
-                <div id="editor-error" style="display: none;"></div>
+                <div id="editor-component">
+                    <!-- 编辑器将在这里加载 -->
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 应用脚本 -->
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
+    
+    <script>
+        // 确保全局函数在app.js加载前就存在（防止报错）
+        window.openEditor = function() {
+            if (window.churchPlayer && typeof window.churchPlayer.openEditor === 'function') {
+                window.churchPlayer.openEditor();
+            } else {
+                console.log('播放器尚未初始化，请稍后重试');
+                // 显示提示
+                alert('播放器正在初始化，请稍后再试...');
+            }
+        };
+        
+        window.closeEditor = function() {
+            if (window.churchPlayer && typeof window.churchPlayer.closeEditor === 'function') {
+                window.churchPlayer.closeEditor();
+            }
+        };
+    </script>
 </body>
 </html>

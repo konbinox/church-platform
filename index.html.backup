@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生命河教会网络聚会</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 左侧导航 -->
+    <div class="sidebar-nav">
+        <div class="nav-header">
+            <h3><i class="fas fa-list"></i> 聚会页面</h3>
+            <div class="page-count">共 <span id="total-pages">30</span> 页</div>
+        </div>
+        <div class="pages-list" id="pages-list">
+            <!-- 缩略图会由JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <!-- 主显示区域 -->
+    <div class="main-content">
+        <!-- 背景层 -->
+        <div id="background-layer" class="background-layer"></div>
+        
+        <!-- 内容容器 -->
+        <div class="content-container">
+            <!-- 时间显示 -->
+            <div id="current-time" class="time-display"></div>
+            
+            <!-- 页面内容 -->
+            <div class="page-content">
+                <h1 id="page-title">加载中...</h1>
+                <div id="page-text" class="page-text">正在加载页面内容...</div>
+                <div class="page-number">
+                    第 <span id="current-page">1</span> 页 / 共 <span id="total-pages-display">30</span> 页
+                </div>
+            </div>
+            
+            <!-- 控制按钮 -->
+            <div class="control-buttons">
+                <div class="bg-control-group">
+                    <button class="bg-control-btn" onclick="window.prevBackground()" title="上一背景">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="bg-info">
+                        <span id="bg-current">1</span> / <span id="bg-total">23</span>
+                    </div>
+                    <button class="bg-control-btn" onclick="window.nextBackground()" title="下一背景">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <button class="control-btn" onclick="window.prevPage()" title="上一页 (←)">
+                    <i class="fas fa-arrow-left"></i> 上一页
+                </button>
+                <button class="control-btn" onclick="window.nextPage()" title="下一页 (→)">
+                    下一页 <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右下角编辑按钮 -->
+    <button class="edit-btn" onclick="window.openEditor()" title="编辑页面">
+        <i class="fas fa-cog"></i>
+    </button>
+
+    <!-- 编辑器模态框 -->
+    <div id="editor-modal" class="editor-modal">
+        <div class="editor-container">
+            <div class="editor-content">
+                <!-- 加载状态 -->
+                <div id="editor-loading" class="editor-loading">
+                    <div class="loading-spinner"></div>
+                    <p>正在加载专业编辑器...</p>
+                </div>
+                
+                <!-- 编辑器组件容器 -->
+                <div id="editor-component" style="display: none;"></div>
+                
+                <!-- 错误状态 -->
+                <div id="editor-error" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 应用脚本 -->
+    <script src="app.js"></script>
+</body>
+</html>
