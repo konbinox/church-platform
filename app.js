@@ -1,4 +1,4 @@
-class ChurchPlayer {
+﻿class ChurchPlayer {
   constructor() {
     this.currentPage = 0;
     this.totalPages = 0;
@@ -23,7 +23,7 @@ class ChurchPlayer {
     try {
       const response = await fetch('content/default-meeting.json');
       const data = await response.json();
-      // ✅ 关键：将 pages 对象转为数组
+      // 将 pages 对象转为数组
       this.pagesData = Object.values(data.pages || {});
       this.totalPages = this.pagesData.length;
       document.getElementById('total-pages').textContent = this.totalPages;
@@ -41,8 +41,7 @@ class ChurchPlayer {
       id: i + 1,
       title: `页面 ${i + 1}`,
       content: `这是第 ${i + 1} 页的内容...`,
-      type: 'text',
-      style: {}
+      type: 'text'
     }));
   }
 
@@ -53,15 +52,19 @@ class ChurchPlayer {
 
   setBackgroundImage(index) {
     const bgIndex = ((index - 1) % this.totalBackgrounds) + 1;
-    document.getElementById('background-layer').style.backgroundImage = 
-      `url('assets/background/slide${bgIndex}.jpg')`;
+    const bgElement = document.getElementById('background-layer');
+    if (bgElement) {
+      bgElement.style.backgroundImage = `url('assets/background/slide${bgIndex}.jpg')`;
+    }
     this.currentBackgroundIndex = bgIndex;
     this.updateBgInfo();
   }
 
   updateBgInfo() {
-    document.getElementById('bg-current').textContent = this.currentBackgroundIndex;
-    document.getElementById('bg-total').textContent = this.totalBackgrounds;
+    const bgCurrent = document.getElementById('bg-current');
+    const bgTotal = document.getElementById('bg-total');
+    if (bgCurrent) bgCurrent.textContent = this.currentBackgroundIndex;
+    if (bgTotal) bgTotal.textContent = this.totalBackgrounds;
   }
 
   nextBackground() {
@@ -72,7 +75,6 @@ class ChurchPlayer {
     this.setBackgroundImage(this.currentBackgroundIndex - 1);
   }
 
-  // 提取页面预览文本（适配你的 JSON 结构）
   getPagePreviewText(page) {
     if (page.content) return page.content;
     if (page.lyrics) return page.lyrics;
@@ -86,6 +88,7 @@ class ChurchPlayer {
   renderNavigation() {
     const pagesList = document.getElementById('pages-list');
     if (!pagesList) return;
+    
     pagesList.innerHTML = '';
 
     this.pagesData.forEach((page, index) => {
@@ -104,105 +107,147 @@ class ChurchPlayer {
           ${page.title || `页面 ${index + 1}`}
         </div>
       `;
+      
       pageItem.addEventListener('click', () => this.showPage(index));
       pagesList.appendChild(pageItem);
     });
   }
 
-  let html = '';
-  
-  // ✅ 如果有 sections，按区块渲染
-  if (Array.isArray(page.sections)) {
-    html = page.sections.map(sec => {
-      let contentHtml = sec.content || '';
+  showPage(pageIndex) {
+    if (pageIndex < 0 || pageIndex >= this.totalPages) return;
+    
+    this.currentPage = pageIndex;
+    const page = this.pagesData[pageIndex];
+    
+    // 更新页面标题
+    const pageTitleElement = document.getElementById('page-title');
+    if (pageTitleElement) {
+      pageTitleElement.textContent = page.title || `页面 ${pageIndex + 1}`;
+    }
+    
+    // 更新页面内容
+    const pageTextElement = document.getElementById('page-text');
+    if (pageTextElement) {
+      let html = '';
       
-      // 如果是文本区块，应用样式
-      if (sec.type === 'text') {
-        const styleStr = Object.entries(sec.style || {}).map(([k, v]) => `${k}:${v}`).join(';');
-        return `<div style="${styleStr}">${contentHtml.replace(/\n/g, '<br>')}</div>`;
+      if (Array.isArray(page.sections)) {
+        html = page.sections.map(section => {
+          if (section.type === 'text' && section.content) {
+            const styleStr = section.style ? Object.entries(section.style)
+              .map(([key, value]) => `${key}:${value}`)
+              .join(';') : '';
+            return `<div style="${styleStr}">${section.content.replace(/\n/g, '<br>')}</div>`;
+          }
+          return `<div>${section.content || ''}</div>`;
+        }).join('');
+      } else {
+        html = this.getPagePreviewText(page).replace(/\n/g, '<br>');
       }
       
-      // 其他类型（图片、音频等）可后续扩展
-      return `<div>${contentHtml}</div>`;
-    }).join('');
-  } 
-  // ✅ 否则，回退到旧方式
-  else {
-    html = this.getPagePreviewText(page).replace(/\n/g, '<br>');
+      pageTextElement.innerHTML = html;
+    }
+    
+    // 更新当前页码显示
+    const currentPageElement = document.getElementById('current-page');
+    if (currentPageElement) {
+      currentPageElement.textContent = pageIndex + 1;
+    }
+    
+    // 更新导航高亮
+    this.updateNavigationHighlight();
   }
 
-  document.getElementById('page-text').innerHTML = html;
-  document.getElementById('current-page').textContent = pageIndex + 1;
-  this.updateNavigationHighlight();
-
-  document.getElementById('page-text').innerHTML = html;
-  this.updateNavigationHighlight();
-}
-
   updateNavigationHighlight() {
-    document.querySelectorAll('.page-item').forEach((item, i) => {
-      item.classList.toggle('active', i === this.currentPage);
+    const pageItems = document.querySelectorAll('.page-item');
+    pageItems.forEach((item, index) => {
+      item.classList.toggle('active', index === this.currentPage);
     });
   }
 
   nextPage() {
-    if (this.currentPage < this.totalPages - 1) this.showPage(this.currentPage + 1);
+    if (this.currentPage < this.totalPages - 1) {
+      this.showPage(this.currentPage + 1);
+    }
   }
 
   prevPage() {
-    if (this.currentPage > 0) this.showPage(this.currentPage - 1);
+    if (this.currentPage > 0) {
+      this.showPage(this.currentPage - 1);
+    }
   }
 
   updateTime() {
     const now = new Date();
-    document.getElementById('current-time').textContent = 
-      now.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    const timeElement = document.getElementById('current-time');
+    if (timeElement) {
+      timeElement.textContent = now.toLocaleTimeString('zh-CN', { 
+        hour12: false, 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    }
     setTimeout(() => this.updateTime(), 1000);
   }
 
   openEditor() {
-    document.getElementById('editor-modal').style.display = 'block';
-    this.loadProfessionalEditor();
+    const editorModal = document.getElementById('editor-modal');
+    if (editorModal) {
+      editorModal.style.display = 'block';
+      this.loadProfessionalEditor();
+    }
   }
 
   closeEditor() {
-    document.getElementById('editor-modal').style.display = 'none';
-    const comp = document.getElementById('editor-component');
-    if (comp) comp.innerHTML = '';
+    const editorModal = document.getElementById('editor-modal');
+    if (editorModal) {
+      editorModal.style.display = 'none';
+    }
+    const editorComponent = document.getElementById('editor-component');
+    if (editorComponent) {
+      editorComponent.innerHTML = '';
+    }
   }
 
   async loadProfessionalEditor() {
     try {
-      document.getElementById('editor-loading').style.display = 'flex';
-      document.getElementById('editor-component').style.display = 'none';
+      const loadingElement = document.getElementById('editor-loading');
+      const editorComponent = document.getElementById('editor-component');
+      
+      if (loadingElement) loadingElement.style.display = 'flex';
+      if (editorComponent) editorComponent.style.display = 'none';
 
       const module = await import('./components/page-editor.js');
       window.pageEditorModule = module;
 
-      document.getElementById('editor-loading').style.display = 'none';
-      document.getElementById('editor-component').style.display = 'block';
-      this.renderEditor();
+      if (loadingElement) loadingElement.style.display = 'none';
+      if (editorComponent) {
+        editorComponent.style.display = 'block';
+        this.renderEditor();
+      }
     } catch (error) {
       console.error('加载编辑器失败:', error);
-      document.getElementById('editor-loading').style.display = 'none';
-      document.getElementById('editor-component').innerHTML = `
-        <div style="padding:40px; text-align:center; color:#e74c3c;">
-          <i class="fas fa-exclamation-triangle fa-3x"></i>
-          <h3>编辑器加载失败</h3>
-          <p>请检查 components/page-editor.js 是否已上传到仓库</p>
-        </div>
-      `;
+      const editorComponent = document.getElementById('editor-component');
+      if (editorComponent) {
+        editorComponent.innerHTML = `
+          <div style="padding:40px; text-align:center; color:#e74c3c;">
+            <h3>编辑器加载失败</h3>
+            <p>请检查 components/page-editor.js 是否已上传到仓库</p>
+          </div>
+        `;
+      }
     }
   }
 
   renderEditor() {
     const container = document.getElementById('editor-component');
+    if (!container) return;
+    
     const currentPage = this.pagesData[this.currentPage] || {};
     container.innerHTML = '<div id="editor-container"></div>';
     
     if (window.pageEditorModule?.renderPageEditor) {
-      window.pageEditorModule.renderPageEditor(currentPage, (updated) => {
-        this.pagesData[this.currentPage] = updated;
+      window.pageEditorModule.renderPageEditor(currentPage, (updatedPage) => {
+        this.pagesData[this.currentPage] = updatedPage;
         this.renderNavigation();
         this.showPage(this.currentPage);
       });
@@ -220,7 +265,7 @@ class ChurchPlayer {
   }
 }
 
-// ✅ 全局函数：供 HTML onclick 调用（兼容 type="module"）
+// 全局函数供 HTML 调用
 window.prevPage = () => window.churchPlayer?.prevPage();
 window.nextPage = () => window.churchPlayer?.nextPage();
 window.prevBackground = () => window.churchPlayer?.prevBackground();
@@ -228,7 +273,7 @@ window.nextBackground = () => window.churchPlayer?.nextBackground();
 window.openEditor = () => window.churchPlayer?.openEditor();
 window.closeEditor = () => window.churchPlayer?.closeEditor();
 
-// 初始化
+// 页面加载完成后初始化
 window.addEventListener('DOMContentLoaded', () => {
-  window.churchPlayer = new ChurchPlayer();
+  new ChurchPlayer();
 });
