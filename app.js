@@ -246,6 +246,7 @@ class ChurchPlayer {
   }
 
 
+
   async loadProfessionalEditor() {
     console.log("加载编辑器");
     
@@ -256,6 +257,112 @@ class ChurchPlayer {
       loadingElement.style.display = "flex";
       loadingElement.innerHTML = "<div>加载编辑器中...</div>";
     }
+    
+    if (editorComponent) {
+      editorComponent.style.display = "none";
+      editorComponent.innerHTML = ""; // 清空
+    }
+    
+    try {
+      // 简单延迟
+      await new Promise(function(resolve) {
+        setTimeout(resolve, 100);
+      });
+      
+      // 尝试导入编辑器
+      var module = await import("./components/page-editor.js");
+      console.log("编辑器模块加载成功");
+      
+      if (loadingElement) {
+        loadingElement.style.display = "none";
+      }
+      
+      if (editorComponent) {
+        editorComponent.style.display = "block";
+        
+        if (module && module.renderPageEditor) {
+          var currentPage = this.pagesData[this.currentPage] || {};
+          module.renderPageEditor(currentPage, function(updatedPage) {
+            // 保存修改
+            this.pagesData[this.currentPage] = updatedPage;
+            this.renderNavigation();
+            this.showPage(this.currentPage);
+            console.log("页面已更新");
+          }.bind(this));
+        } else {
+          console.error("编辑器函数不存在");
+          this.showSimpleEditor();
+        }
+      }
+    } catch (error) {
+      console.error("编辑器加载失败:", error);
+      
+      if (loadingElement) {
+        loadingElement.style.display = "none";
+      }
+      
+      if (editorComponent) {
+        editorComponent.style.display = "block";
+        this.showSimpleEditor();
+      }
+    }
+  }
+
+  showSimpleEditor() {
+    console.log("显示简单编辑器");
+    var editorComponent = document.getElementById("editor-component");
+    if (!editorComponent) return;
+    
+    var currentPage = this.pagesData[this.currentPage] || {};
+    
+    var html = "";
+    html += '<div style="padding: 30px; color: white; text-align: center;">';
+    html += '<h3 style="color: #3498db; margin-bottom: 25px;">简易编辑器</h3>';
+    
+    html += '<div style="margin-bottom: 20px;">';
+    html += '<input type="text" id="simpleTitle" value="' + (currentPage.title || "") + '" ';
+    html += 'placeholder="页面标题" ';
+    html += 'style="width: 80%; max-width: 500px; padding: 12px; margin-bottom: 15px; ';
+    html += 'background: rgba(255,255,255,0.1); color: white; border: 1px solid #666; ';
+    html += 'border-radius: 6px; font-size: 16px; text-align: center;">';
+    html += '</div>';
+    
+    html += '<div style="margin-bottom: 25px;">';
+    html += '<textarea id="simpleContent" rows="12" placeholder="页面内容" ';
+    html += 'style="width: 80%; max-width: 500px; padding: 12px; ';
+    html += 'background: rgba(255,255,255,0.1); color: white; border: 1px solid #666; ';
+    html += 'border-radius: 6px; font-size: 16px; text-align: center;">';
+    html += (currentPage.content || currentPage.text || "") + '</textarea>';
+    html += '</div>';
+    
+    html += '<div style="display: flex; gap: 15px; justify-content: center;">';
+    html += '<button onclick="window.churchPlayer.saveSimpleEdit()" ';
+    html += 'style="padding: 12px 30px; background: #27ae60; color: white; ';
+    html += 'border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">保存</button>';
+    html += '<button onclick="window.churchPlayer.closeEditor()" ';
+    html += 'style="padding: 12px 30px; background: #e74c3c; color: white; ';
+    html += 'border: none; border-radius: 6px; cursor: pointer;">取消</button>';
+    html += '</div>';
+    html += '</div>';
+    
+    editorComponent.innerHTML = html;
+  }
+
+  saveSimpleEdit() {
+    var titleInput = document.getElementById("simpleTitle");
+    var contentInput = document.getElementById("simpleContent");
+    
+    if (titleInput && contentInput) {
+      this.pagesData[this.currentPage] = {
+        title: titleInput.value,
+        content: contentInput.value
+      };
+      
+      this.renderNavigation();
+      this.showPage(this.currentPage);
+      this.closeEditor();
+    }
+  }
     
     if (editorComponent) {
       editorComponent.style.display = "none";
